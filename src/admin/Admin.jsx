@@ -12,7 +12,6 @@ export default function Admin() {
 
   const [showLogin, setShowLogin] = useState(true);
   const [validToken, setValidToken] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem('token');
 
   const schema = yup.object().shape({
@@ -39,7 +38,6 @@ export default function Admin() {
       await VERIFY_TOKEN()
         .then((res) => {
           setValidToken(res);
-          setIsLoading(false);
         });
     }
 
