@@ -1,0 +1,34 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Delete build folder
+        run: rm -rf build
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting:fantom-csb --token ${{ secrets.FIREBASE_TOKEN }}
