@@ -1,6 +1,7 @@
 import Swal from "sweetalert2"
 import { Methods } from "../helpers/constants"
 import { request } from "./request"
+import errorHandler from "../helpers/errorHandler"
 
 const VANELLUS_BE = 'http://localhost:4000'
 
@@ -27,5 +28,14 @@ export const GET_TICKETS = async () => {
       title: 'Error',
       text: 'Intentalo devuelta'
     })
+  }
+}
+
+export const VERIFY_TOKEN = async () => {
+  try {
+    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/verify-token`, null, null)
+    return res?.data
+  } catch (error) {
+    return errorHandler(error)
   }
 }
