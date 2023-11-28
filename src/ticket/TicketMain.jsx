@@ -4,21 +4,23 @@ import { Button, Col, Form } from "react-bootstrap";
 import * as yup from 'yup';
 import ClientUpload from "../client/ClientUpload";
 import img from '../IMG-20231116-WA0011.jpg';
+import img2 from '../IMG-20231116-WA0011 (1).jpg';
 import './ticket.scss';
 
 export default function TicketMain() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [total, setTotal] = useState(6000);
+  const [totalClients, setTotalClients] = useState(1);
   const price = 6000;
 
   const schema = yup.object().shape({
     quantity: yup.number().positive('Debe ser mayor a 0').required('Selecciona')
   });
 
-  const handleClickNext = (values, { setSubmitting }) => {
-    console.log(values, total, price);
-    setShowCreate(true)
+  const handleClickNext = (setFieldValue) => {
+    setShowCreate(true);
+    setFieldValue('quantity', 1);
   };
 
   const generateOptions = () => {
@@ -36,7 +38,9 @@ export default function TicketMain() {
         initialValues={{
           quantity: 1
         }}
-        onSubmit={handleClickNext}
+        onSubmit={(values, { setFieldValue }) => {
+          handleClickNext(setFieldValue);
+        }}
       >
         {({
           handleSubmit,
@@ -49,6 +53,10 @@ export default function TicketMain() {
           isSubmitting,
         }) => (
           <Form noValidate onSubmit={handleSubmit} className='ticket-form'>
+            <Form.Group as={Col} controlId="details">
+              <h1>FANTOM 9/12</h1>
+            </Form.Group>
+
             <Form.Group as={Col} controlId="validationFormikQuantity">
               <Form.Label>Entradas</Form.Label>
               <Form.Select
@@ -57,6 +65,7 @@ export default function TicketMain() {
                   const selectedQuantity = parseInt(e.target.value, 10);
                   setFieldValue('quantity', selectedQuantity);
                   setTotal(selectedQuantity * price);
+                  setTotalClients(selectedQuantity);
                 }}
                 onBlur={handleBlur}
                 value={values.quantity}
@@ -79,8 +88,13 @@ export default function TicketMain() {
           </Form>
         )}
       </Formik>
-      <img src={img} alt='img' className='flyer-img' />
-      <ClientUpload showCreate={showCreate} setShowCreate={setShowCreate} />
+      <img src={window.innerWidth > 521 ? img : img2} alt='img' className='flyer-img' />
+      <ClientUpload
+        showCreate={showCreate}
+        setShowCreate={setShowCreate}
+        totalClients={totalClients}
+        setTotalClients={setTotalClients}
+      />
     </div>
   );
 }

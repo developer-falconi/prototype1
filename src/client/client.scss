@@ -32,3 +32,22 @@
   align-items: center;
   justify-content: center;
 }
+
+.list-group {
+  margin-bottom: 1rem;
+}
+
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  svg {
+    cursor: pointer;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}

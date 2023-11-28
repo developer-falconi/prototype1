@@ -2,11 +2,20 @@ import axios from "axios";
 import Swal from 'sweetalert2';
 
 export const request = async (method, url, params, data) => {
+
+  let token = localStorage.getItem('token')
+
   const config = {
     method: method,
     url: url,
     params: params,
-    data: data
+    data: data,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
   }
 
   try {
@@ -16,7 +25,7 @@ export const request = async (method, url, params, data) => {
     console.log(error)
     Swal.fire({
       title: 'Error!',
-      text: `Ocurrio un error inesperado!`,
+      text: `No estas logueado`,
       icon: 'error',
       timer: 2500,
       timerProgressBar: true,
