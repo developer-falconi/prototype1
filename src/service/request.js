@@ -12,7 +12,6 @@ export const request = async (method, url, params, data) => {
     data: data,
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Content-Type'
     }

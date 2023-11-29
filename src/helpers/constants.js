@@ -3,3 +3,5 @@ export const Methods = {
   POST: 'POST',
   PUT: 'PUT'
 }
+
+export const tickets = []
