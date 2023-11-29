@@ -1,7 +1,7 @@
 .spinner-box {
   position: absolute;
-  top: 16rem;
-  left: 7rem;
+  top: 40%;
+  left: 45%;
   background-color: transparent;
 }
 
@@ -54,5 +54,12 @@
 
   to {
     transform: rotate3d(0deg);
+  }
+}
+
+@media screen and (max-width: 512px) {
+  .spinner-box {
+    top: 16rem;
+    left: 7rem;
   }
 }
