@@ -3,7 +3,8 @@ import { Methods } from "../helpers/constants"
 import { request } from "./request"
 import errorHandler from "../helpers/errorHandler"
 
-const VANELLUS_BE = 'http://localhost:4000'
+const VANELLUS_BE = process.env.REACT_APP_VANELLUS_BE
+console.log(VANELLUS_BE)
 
 export const CREATE_TICKET = async (clientData) => {
   try {
