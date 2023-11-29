@@ -33,6 +33,16 @@
   justify-content: center;
 }
 
+.invalid-feedback {
+  display: unset !important;
+}
+
+.info-alias {
+  flex-direction: unset;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
 .list-group {
   margin-bottom: 1rem;
 }

@@ -18,9 +18,9 @@ export const CREATE_TICKET = async (clientData) => {
   }
 }
 
-export const GET_TICKETS = async () => {
+export const GET_TICKETS = async (prevent) => {
   try {
-    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket`, null, null)
+    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket?prevent=${prevent}`, null, null)
     return res.data
   } catch (error) {
     console.log(error)
@@ -37,5 +37,27 @@ export const VERIFY_TOKEN = async () => {
     return res?.data
   } catch (error) {
     return errorHandler(error)
+  }
+}
+
+export const CREATE_QR = async (client) => {
+  try {
+    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/createQr`, null, client)
+    return res?.data
+  } catch (error) {
+    return errorHandler(error)
+  }
+}
+
+export const GET_PREVENTS = async () => {
+  try {
+    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/getPrevents`, null, null)
+    return res.data
+  } catch (error) {
+    console.log(error)
+    return Swal.fire({
+      title: 'Error',
+      text: 'Intentalo devuelta'
+    })
   }
 }

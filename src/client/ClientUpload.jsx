@@ -7,10 +7,11 @@ import { CREATE_TICKET } from "../service/ticket.requests";
 import { FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 
-export default function ClientUpload({ showCreate, setShowCreate, totalClients, setTotalClients }) {
+export default function ClientUpload({ showCreate, setShowCreate, totalClients, setTotalClients, totalPrice, setTotalPrice, prevent }) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [clients, setClients] = useState([]);
+  const [file, setFile] = useState(null);
 
   const schema = yup.object().shape({
     fullName: yup.string().required('Nombre necesario').min(8, 'Esta bien??'),
@@ -26,28 +27,48 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     email: yup.string().email('Esta bien??').required('Email necesario'),
   });
 
-  const handleAddClient = (values) => {
+  const handleAddClient = (values, setFieldValue) => {
     setClients((prevCli) => [...prevCli, { fullName: values.fullName, dni: values.dni }])
+    setFieldValue('fullName', '')
+    setFieldValue('dni', '')
   }
 
   const handleDeleteClient = (indexDelete) => {
     setClients([...clients.filter((elem, index) => index !== indexDelete)])
   }
 
-  const onSubmitHandler = async (values, { setSubmitting }) => {
+  const handleHide = () => {
+    setShowCreate(false);
+    setClients([]);
+    setTotalPrice(prevent.price);
+    setTotalClients(1);
+  }
+
+  const handleAddComprobante = (e) => {
+    if (e.target.files) {
+      setFile(e.target.files[0])
+    }
+  }
+
+  const onSubmitHandler = async (values, setFieldValue) => {
     setIsLoading(true);
 
     const formData = new FormData();
     formData.append('clients', JSON.stringify(clients));
-    formData.append('comprobante', values.comprobante);
+    formData.append('comprobante', file);
     formData.append('email', values.email);
+    formData.append('total', totalPrice);
+    formData.append('prevent', prevent._id);
+
 
     await CREATE_TICKET(formData).then(() => {
       setIsLoading(false);
-      setSubmitting(false);
       setShowCreate(false);
       setTotalClients(1);
       setClients([]);
+
+      setFieldValue('comprobante', '');
+      setFieldValue('email', '');
 
       return Swal.fire({
         title: 'Compra realizada con exito',
@@ -59,7 +80,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
   return (
     <Modal
       show={showCreate}
-      onHide={() => setShowCreate(!showCreate)}
+      onHide={handleHide}
       aria-labelledby="contained-modal-title-vcenter"
       centered
       className="modal-clients"
@@ -88,18 +109,20 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
             values,
             errors,
             isValid,
-            isSubmitting,
           }) => (
             <Form noValidate onSubmit={handleSubmit} className='client-form'>
+              <Form.Label>Datos de las {totalClients} entradas</Form.Label>
               <ListGroup>
-                {clients.map((client, index) => (
-                  <ListGroup.Item key={index}>
-                    <p>
-                      {`Cliente ${index + 1}: ${client.fullName}, DNI: ${client.dni}`}
-                    </p>
-                    <FiTrash2 onClick={() => handleDeleteClient(index)} />
-                  </ListGroup.Item>
-                ))}
+                {clients.map((client, index) => {
+                  return (
+                    <ListGroup.Item key={index}>
+                      <p>
+                        {`${client.fullName} / ${client.dni}`}
+                      </p>
+                      <FiTrash2 onClick={() => handleDeleteClient(index)} />
+                    </ListGroup.Item>
+                  )
+                })}
               </ListGroup>
 
               {
@@ -136,7 +159,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                     <Form.Group as={Col} controlId="validationFormikAddClient">
                       <Button
                         className="mt-0 mb-3"
-                        disabled={(!values.fullName && !values.dni) || clients.length === totalClients}
+                        disabled={!(values.fullName && values.dni) || !!errors.fullName || !!errors.dni}
                         onClick={(e) => {
                           handleAddClient(values, setFieldValue)
                         }}>
@@ -149,6 +172,10 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
               {
                 clients.length === totalClients && (
                   <>
+                    <Form.Group as={Col} className="info-alias">
+                      <Form.Label className="fs-5">Transferir ${totalPrice.toFixed(2)}</Form.Label>
+                      <Form.Label className="fs-5">Alias: NeverFantom</Form.Label>
+                    </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">
                       <Form.Label>Comprobante</Form.Label>
                       <input
@@ -156,7 +183,8 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                         name="comprobante"
                         accept=".jpg, .jpeg, .png, .pdf"
                         onChange={(event) => {
-                          setFieldValue('comprobante', event.currentTarget.files[0]);
+                          handleAddComprobante(event)
+                          setFieldValue('comprobante', event.target.files[0]);
                         }}
                         onBlur={handleBlur}
                       />
@@ -185,13 +213,17 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                           <Spinner as="span" animation="border" size='sm' role="status" aria-hidden="true" />
                         </Button>
                       ) : (
-                        <Button type="submit" disabled={!isValid || clients.length !== totalClients}>
+                        <Button
+                          onClick={() => onSubmitHandler(values, setFieldValue)}
+                          disabled={
+                            clients.length !== totalClients ||
+                            errors.email ||
+                            errors.comprobante
+                          }
+                        >
                           Enviar
                         </Button>
                       )}
-                      <Form.Control.Feedback type="invalid">
-                        {clients.length !== totalClients && `Carga los nombre y dni de las ${totalClients} entradas`}
-                      </Form.Control.Feedback>
                     </Form.Group>
                   </>
                 )
