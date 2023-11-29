@@ -61,7 +61,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     formData.append('prevent', prevent._id);
 
 
-    await CREATE_TICKET(formData).then(() => {
+    await CREATE_TICKET(formData).then((res) => {
       setIsLoading(false);
       setShowCreate(false);
       setTotalClients(1);
@@ -69,11 +69,18 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
 
       setFieldValue('comprobante', '');
       setFieldValue('email', '');
-
-      return Swal.fire({
-        title: 'Compra realizada con exito',
-        text: 'Vamos a validar el pago y una vez confirmado, te enviaremos al mail las entradas qr'
-      })
+      if (res?._id) {
+        return Swal.fire({
+          title: 'Compra realizada con éxito',
+          icon: 'success',
+          text: 'Vamos a validar el pago y una vez confirmado, te enviaremos al mail las entradas qr'
+        })
+      } else {
+        return Swal.fire({
+          title: 'Ocurrió un error, intenta devuelta',
+          icon: 'error'
+        })
+      }
     })
   };
 

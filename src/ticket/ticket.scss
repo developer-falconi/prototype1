@@ -219,6 +219,21 @@ h1 {
   color: #FAFAFA;
 }
 
+.sold-out-label {
+  font-size: 18px;
+  color: #ff0000;
+  font-weight: bold;
+  text-transform: uppercase;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #fff;
+  padding: 10px;
+  transform: rotate(45deg);
+  transform-origin: 0 0;
+  z-index: 1;
+}
+
 @media screen and (max-width: 520px) {
   .ticket-form {
     position: absolute;

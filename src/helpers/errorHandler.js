@@ -4,7 +4,7 @@ export default function errorHandler(error) {
   if (error.response && error.response.status === 401) {
     Swal.fire({
       title: 'Error!',
-      text: `Sesion inactiva`,
+      text: `Sesión inactiva`,
       icon: 'error',
       timer: 2500,
       timerProgressBar: true,
@@ -17,7 +17,7 @@ export default function errorHandler(error) {
   } else {
     Swal.fire({
       title: 'Error!',
-      text: `Ocurrio un error inesperado!`,
+      text: `Ocurrió un error inesperado!`,
       icon: 'error',
       timer: 2500,
       timerProgressBar: true,
