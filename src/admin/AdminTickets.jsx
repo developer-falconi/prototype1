@@ -32,7 +32,6 @@ export default function AdminTickets() {
   }, []);
 
   const handleCreateQr = async (client) => {
-    console.log(client);
     const res = await CREATE_QR(client);
     console.log(res);
   };
@@ -45,7 +44,7 @@ export default function AdminTickets() {
     setActivePreventa(preventaId);
     getClients(preventaId);
   };
-  console.log(clients)
+  
   useEffect(() => {
     getPrevents();
   }, [getPrevents]);

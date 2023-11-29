@@ -36,6 +36,9 @@ export default function Prevent({ prevent }) {
 
   return (
     <>
+      {/* {prevent.active && (
+          <div class="sold-out-label">AGOTADO</div>
+        )} */}
       <Formik
         validationSchema={schema}
         initialValues={{
@@ -57,7 +60,7 @@ export default function Prevent({ prevent }) {
             <Form.Group as={Col} className="card cardLeft" controlId={`validationFormikQuantity_${prevent._id}`}>
               <Form.Label className="title-prevent">{prevent.name}</Form.Label>
               <Form.Group className="select-tickets">
-                <Form.Label>Selecciona</Form.Label>
+                <Form.Label>Seleccioná</Form.Label>
                 <Form.Select
                   name="quantity"
                   onChange={(e) => {
