@@ -24,10 +24,6 @@ export const CREATE_TICKET = async (clientData) => {
     return res.data
   } catch (error) {
     console.log(error)
-    return Swal.fire({
-      title: 'Error',
-      text: 'Intentalo devuelta'
-    })
   }
 }
 
