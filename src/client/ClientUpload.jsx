@@ -6,12 +6,15 @@ import './client.scss';
 import { CREATE_TICKET, UPLOAD_COMPROBANTE } from "../service/ticket.requests";
 import { FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
+import { useRef } from "react";
 
 export default function ClientUpload({ showCreate, setShowCreate, totalClients, setTotalClients, totalPrice, setTotalPrice, prevent }) {
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [clients, setClients] = useState([]);
-  const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
+  const fileInputRef = useRef(null);
 
   const schema = yup.object().shape({
     fullName: yup.string().required('Nombre necesario').min(8, 'Esta bien??'),
@@ -44,17 +47,17 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     setTotalClients(1);
   }
 
-  const handleAddComprobante = (e) => {
+  const handleAddComprobante = (e, setFieldValue) => {
     if (e.target.files) {
-      setFile(e.target.files[0])
+      handleUploadComprobante(e.target.files[0], setFieldValue)
     }
   }
 
-  const createTicket = async (ticketData, setFieldValue, url) => {
+  const handleCreateTicket = async (ticketData, setFieldValue) => {
     const dataParsed = {
       email: ticketData.email,
       clients: clients,
-      cloudinaryUrl: url,
+      cloudinaryUrl: fileUrl,
       prevent: prevent._id,
       total: totalPrice
     }
@@ -82,16 +85,16 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     })
   }
 
-  const onSubmitHandler = async (values, setFieldValue) => {
-    setIsLoading(true);
+  const handleUploadComprobante = async (file, setFieldValue) => {
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append('comprobante', file);
 
-    await UPLOAD_COMPROBANTE(formData).then(async (url) => {
-      if (url) {
-        await createTicket(values, setFieldValue, url)
-      }
+    await UPLOAD_COMPROBANTE(formData).then((url) => {
+      setFileUrl(url);
+      setFieldValue('comprobante', file)
+      setIsUploading(false);
     })
 
   };
@@ -118,7 +121,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
             comprobante: '',
             email: '',
           }}
-          onSubmit={onSubmitHandler}
+          onSubmit={handleCreateTicket}
         >
           {({
             handleSubmit,
@@ -197,16 +200,32 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">
                       <Form.Label>Comprobante</Form.Label>
-                      <input
-                        type="file"
-                        name="comprobante"
-                        accept=".jpg, .jpeg, .png, .pdf"
-                        onChange={(event) => {
-                          handleAddComprobante(event)
-                          setFieldValue('comprobante', event.target.files[0]);
-                        }}
-                        onBlur={handleBlur}
-                      />
+                      {
+                        isUploading ? (
+                          <Spinner as="span" animation="border" size='sm' role="status" aria-hidden="true" />
+                        ) : (
+                          <>
+                            {
+                              fileUrl ? (
+                                <a href={fileUrl} target="_blank" rel="noreferrer">Comprobante</a>
+                              ) : (
+                                <input
+                                  type="file"
+                                  name="comprobante"
+                                  accept=".jpg, .jpeg, .png, .pdf"
+                                  ref={fileInputRef}
+                                  onChange={(event) => {
+                                    handleAddComprobante(event, setFieldValue)
+                                    handleChange(event)
+                                  }}
+                                  onBlur={handleBlur}
+                                />
+                              )
+                            }
+                          </>
+                        )
+                      }
+                      {console.log(errors)}
                       <Form.Control.Feedback type="invalid">
                         {errors.comprobante}
                       </Form.Control.Feedback>
@@ -233,11 +252,12 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                         </Button>
                       ) : (
                         <Button
-                          onClick={() => onSubmitHandler(values, setFieldValue)}
+                          onClick={() => handleCreateTicket(values, setFieldValue)}
                           disabled={
                             clients.length !== totalClients ||
                             errors.email ||
-                            errors.comprobante
+                            errors.comprobante ||
+                            isUploading
                           }
                         >
                           Enviar
