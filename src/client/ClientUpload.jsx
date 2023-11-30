@@ -59,8 +59,8 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     formData.append('email', values.email);
     formData.append('total', totalPrice);
     formData.append('prevent', prevent._id);
-
-
+    formData.append('__end', 'true');
+    
     await CREATE_TICKET(formData).then((res) => {
       setIsLoading(false);
       setShowCreate(false);
