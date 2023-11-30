@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, Col, Form, ListGroup, Modal, Spinner } from "react-bootstrap";
 import * as yup from 'yup';
 import './client.scss';
-import { CREATE_TICKET } from "../service/ticket.requests";
+import { CREATE_TICKET, UPLOAD_COMPROBANTE } from "../service/ticket.requests";
 import { FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 
@@ -50,18 +50,16 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     }
   }
 
-  const onSubmitHandler = async (values, setFieldValue) => {
-    setIsLoading(true);
+  const createTicket = async (ticketData, setFieldValue, url) => {
+    const dataParsed = {
+      email: ticketData.email,
+      clients: clients,
+      cloudinaryUrl: url,
+      prevent: prevent._id,
+      total: totalPrice
+    }
 
-    const formData = new FormData();
-    formData.append('clients', JSON.stringify(clients));
-    formData.append('comprobante', file);
-    formData.append('email', values.email);
-    formData.append('total', totalPrice);
-    formData.append('prevent', prevent._id);
-    formData.append('__end', 'true');
-    
-    await CREATE_TICKET(formData).then((res) => {
+    await CREATE_TICKET(dataParsed).then((res) => {
       setIsLoading(false);
       setShowCreate(false);
       setTotalClients(1);
@@ -82,6 +80,20 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
         })
       }
     })
+  }
+
+  const onSubmitHandler = async (values, setFieldValue) => {
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append('comprobante', file);
+
+    await UPLOAD_COMPROBANTE(formData).then(async (url) => {
+      if (url) {
+        await createTicket(values, setFieldValue, url)
+      }
+    })
+
   };
 
   return (
