@@ -234,6 +234,10 @@ h1 {
   z-index: 1;
 }
 
+.info-help {
+  font-size: 1rem;
+}
+
 @media screen and (max-width: 520px) {
   .ticket-form {
     position: absolute;
@@ -297,5 +301,9 @@ h1 {
 
   .client-form input {
     width: 95%;
+  }
+
+  .info-help {
+    color: #FAFAFA;
   }
 }

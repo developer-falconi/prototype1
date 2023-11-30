@@ -8,7 +8,7 @@ const VANELLUS_BE = process.env.REACT_APP_VANELLUS_BE
 
 export const CREATE_TICKET = async (clientData) => {
   try {
-    const res = await request(Methods.POST,  `${VANELLUS_BE}/ticket/create`, null, clientData)
+    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/create`, null, clientData)
     return res.data
   } catch (error) {
     console.log(error)
@@ -23,7 +23,7 @@ export const UPLOAD_COMPROBANTE = async (comprobante) => {
       params: null,
       data: comprobante,
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data; boundary=XXX",
         'Access-Control-Allow-Origin': '*',
       }
     }

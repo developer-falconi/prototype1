@@ -39,7 +39,7 @@ export default function TicketMain() {
                   return <Prevent key={elem._id} prevent={elem} />
                 })
               }
-              <h2 style={{ fontSize: '1rem' }}>
+              <h2 className="info-help">
                 Por cualquier problema comunicarse con
                 <a
                   href="https://wa.me/+5491161569011?text=Hola!%20Necesito%20entradas%20para%20la%20Fantom"
