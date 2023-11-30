@@ -54,6 +54,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
   }
 
   const handleCreateTicket = async (ticketData, setFieldValue) => {
+    setIsLoading(true);
     const dataParsed = {
       email: ticketData.email,
       clients: clients,
