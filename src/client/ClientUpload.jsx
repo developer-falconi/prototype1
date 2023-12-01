@@ -91,6 +91,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
 
     const formData = new FormData();
     formData.append('comprobante', file);
+    // const fileEncoded = new URLSearchParams(formData).toString();
 
     await UPLOAD_COMPROBANTE(formData).then((url) => {
       setFileUrl(url);
@@ -226,7 +227,6 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                           </>
                         )
                       }
-                      {console.log(errors)}
                       <Form.Control.Feedback type="invalid">
                         {errors.comprobante}
                       </Form.Control.Feedback>
