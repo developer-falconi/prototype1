@@ -17,7 +17,7 @@ export default function TicketMain() {
 
   const getPrevents = useCallback(async () => {
     await GET_PREVENTS().then((res) => {
-      // setIsLoading(false)
+      setIsLoading(false)
       setPrevents(res)
     })
   }, [])
