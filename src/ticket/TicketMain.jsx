@@ -8,7 +8,7 @@ import { cloudinaryImg } from "../helpers/cloudinary";
 
 const img = 'Vanellus/Ppal/Flyercrop_skfynv'
 const img2 = 'Vanellus/Ppal/Flyer_fgwdm5'
-const img3 = 'Vanellus/Ppal/f03e7805-0443-4b90-be25-414c3f5ef007_variated_wkxufe'
+// const img3 = 'Vanellus/Ppal/f03e7805-0443-4b90-be25-414c3f5ef007_variated_wkxufe'
 
 export default function TicketMain() {
 
