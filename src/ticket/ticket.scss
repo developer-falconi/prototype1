@@ -55,6 +55,7 @@
 .cardWrap {
   color: #fff;
   font-family: sans-serif;
+  position: relative;
 }
 
 .card {
@@ -219,19 +220,11 @@ h1 {
   color: #FAFAFA;
 }
 
-.sold-out-label {
-  font-size: 18px;
-  color: #ff0000;
+.sold-out {
+  margin-top: 1.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  text-transform: uppercase;
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #fff;
-  padding: 10px;
-  transform: rotate(45deg);
-  transform-origin: 0 0;
-  z-index: 1;
+  color: #9f0d0d;
 }
 
 .info-help {
@@ -242,6 +235,10 @@ h1 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.non-active {
+  background: linear-gradient(to bottom, #dc3545 0%, #3c0303 26%, #ecedef 26%, #ecedef 100%);
 }
 
 @media screen and (max-width: 520px) {

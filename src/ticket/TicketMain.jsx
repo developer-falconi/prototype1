@@ -32,7 +32,7 @@ export default function TicketMain() {
         isLoading ? (
           <>
             <Loader />
-            <AdvancedImage cldImg={cloudinaryImg(img3)} alt='ghosts' className='ghost-img' />
+            {/* <AdvancedImage cldImg={cloudinaryImg(img3)} alt='ghosts' className='ghost-img' /> */}
           </>
         ) : (
           <>
@@ -40,7 +40,7 @@ export default function TicketMain() {
               <h1>FANTOM 9/12</h1>
               {
                 prevents.map((elem) => {
-                  return <Prevent key={elem._id} prevent={elem} />
+                  return <Prevent key={elem.prevent._id} prevent={elem.prevent} />
                 })
               }
               <h2 className="info-help">

@@ -36,9 +36,6 @@ export default function Prevent({ prevent }) {
 
   return (
     <>
-      {/* {prevent.active && (
-          <div class="sold-out-label">AGOTADO</div>
-        )} */}
       <Formik
         validationSchema={schema}
         initialValues={{
@@ -57,39 +54,53 @@ export default function Prevent({ prevent }) {
           isValid,
         }) => (
           <Form noValidate onSubmit={handleSubmit} className="cardWrap">
-            <Form.Group as={Col} className="card cardLeft" controlId={`validationFormikQuantity_${prevent._id}`}>
+            <Form.Group
+              as={Col}
+              className={`card cardLeft ${!prevent.active && 'non-active'}`}
+              controlId={`validationFormikQuantity_${prevent._id}`}
+            >
               <Form.Label className="title-prevent">{prevent.name}</Form.Label>
-              <Form.Group className="select-tickets">
-                <Form.Label>Seleccioná</Form.Label>
-                <Form.Select
-                  name="quantity"
-                  onChange={(e) => {
-                    const selectedQuantity = parseInt(e.target.value, 10);
-                    setQuantity(selectedQuantity);
-                    setTotal(selectedQuantity * prevent.price);
-                    setTotalClients(selectedQuantity);
-                    setFieldValue('quantity', selectedQuantity);
-                  }}
-                  onBlur={handleBlur}
-                  value={values.quantity}
-                  className="ticket-select"
-                >
-                  {generateOptions()}
-                </Form.Select>
-                <Form.Control.Feedback type="invalid">
-                  {errors.quantity}
-                </Form.Control.Feedback>
-              </Form.Group>
+              {
+                prevent.active ? (
+                  <Form.Group className="select-tickets">
+                    <Form.Label>Seleccioná</Form.Label>
+                    <Form.Select
+                      name="quantity"
+                      onChange={(e) => {
+                        const selectedQuantity = parseInt(e.target.value, 10);
+                        setQuantity(selectedQuantity);
+                        setTotal(selectedQuantity * prevent.price);
+                        setTotalClients(selectedQuantity);
+                        setFieldValue('quantity', selectedQuantity);
+                      }}
+                      onBlur={handleBlur}
+                      value={values.quantity}
+                      className="ticket-select"
+                    >
+                      {generateOptions()}
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.quantity}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                ) : (
+                  <span className="sold-out">AGOTADO</span>
+                )
+              }
             </Form.Group>
 
-            <Form.Group as={Col} className="card cardRight" controlId={`validationTotal_${prevent._id}`}>
+            <Form.Group
+              as={Col}
+              className={`card cardRight ${!prevent.active && 'non-active'}`}
+              controlId={`validationTotal_${prevent._id}`}
+            >
               <IoTicketSharp className='ticket-icon' />
               <Form.Group className="number">
                 <Form.Label className="ticket-label">Total</Form.Label>
                 <Form.Text className="ticket-total">${total.toFixed(2)}</Form.Text>
               </Form.Group>
               <Form.Group className="button">
-                <Button type="submit" disabled={!isValid} className="ticket-submit">
+                <Button type="submit" disabled={!isValid || !prevent.active} className="ticket-submit">
                   Comprar
                 </Button>
               </Form.Group>

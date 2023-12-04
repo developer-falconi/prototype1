@@ -44,11 +44,11 @@ export default function AdminTickets() {
     setActivePreventa(preventaId);
     getClients(preventaId);
   };
-  
+
   useEffect(() => {
     getPrevents();
   }, [getPrevents]);
-
+  console.log(clients)
   return (
     <>
       <Button onClick={handleScan}>Escanear</Button>
@@ -58,8 +58,12 @@ export default function AdminTickets() {
         onSelect={handleTabSelect}
       >
         {prevents.map((elem) => (
-          <Tab key={elem._id} eventKey={elem._id} title={`${elem.name} ${elem.price}`}>
-            <Table striped bordered hover className="clientsToApprove">
+          <Tab
+            key={elem._id}
+            eventKey={elem.prevent._id}
+            title={`${elem.prevent.name} Clientes=${elem.totalClients} Importe=$${(elem.prevent.price * elem.totalClients).toFixed(2)}`}
+          >
+            <Table striped bordered hover className="clients-to-approve">
               <thead>
                 <tr>
                   <th>Nombre</th>
