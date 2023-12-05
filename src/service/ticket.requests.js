@@ -56,9 +56,9 @@ export const VERIFY_TOKEN = async () => {
   }
 }
 
-export const CREATE_QR = async (client) => {
+export const CREATE_QR = async (ticketsData) => {
   try {
-    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/createQr`, null, client)
+    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/createQr`, null, ticketsData)
     return res?.data
   } catch (error) {
     return errorHandler(error)
