@@ -2,9 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { CREATE_QR, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
 import { Button, Table, Tab, Tabs } from "react-bootstrap";
 import './admin.scss';
-import QRScanner from "../qr/QrReader";
+import QRScanner from "../qr/QrScanner";
 import { FaSquareCheck } from "react-icons/fa6";
-import QrCode from "../qr/QrCode";
 
 export default function AdminTickets() {
 
@@ -31,8 +30,14 @@ export default function AdminTickets() {
     }
   }, []);
 
-  const handleCreateQr = async (client) => {
-    const res = await CREATE_QR(client);
+  const handleCreateQr = async (voucher) => {
+    console.log(voucher)
+    const createTicketsData = {
+      clients: voucher.clients,
+      email: voucher.email
+    }
+    const res = await CREATE_QR(createTicketsData);
+    // const voucherClients = clients.filter((elem) => elem.)
     console.log(res);
   };
 
@@ -48,7 +53,7 @@ export default function AdminTickets() {
   useEffect(() => {
     getPrevents();
   }, [getPrevents]);
-  console.log(clients)
+  
   return (
     <>
       <Button onClick={handleScan}>Escanear</Button>
@@ -59,7 +64,7 @@ export default function AdminTickets() {
       >
         {prevents.map((elem) => (
           <Tab
-            key={elem._id}
+            key={elem.prevent._id}
             eventKey={elem.prevent._id}
             title={`${elem.prevent.name} Clientes=${elem.totalClients} Importe=$${(elem.prevent.price * elem.totalClients).toFixed(2)}`}
           >
@@ -75,21 +80,21 @@ export default function AdminTickets() {
                 </tr>
               </thead>
               <tbody>
-                {clients.map((preventa, preventaIndex) => (
-                  preventa.clients.map((client, clientIndex) => (
-                    <tr key={`${preventaIndex}-${clientIndex}`}>
+                {clients.map((voucher, voucherIndex) => (
+                  voucher.clients.map((client, clientIndex) => (
+                    <tr key={`${voucherIndex}-${clientIndex}`}>
                       <td>{client.fullName}</td>
                       <td>{client.dni}</td>
-                      <td>{preventa.email}</td>
-                      <td>{client.ticket ? <QrCode ticket={client.ticket} /> : 'No QR Code'}</td>
+                      <td>{voucher.email}</td>
+                      <td>{client.ticket ? <img src={client.ticket.url} alt="qr" /> : 'No QR Code'}</td>
                       <td>
                         {client.ticket ?
                           <FaSquareCheck />
-                          : <Button onClick={() => handleCreateQr(client)}>Crear</Button>
+                          : <Button onClick={() => handleCreateQr(voucher)}>Crear</Button>
                         }
                       </td>
                       <td>
-                        <a href={preventa.url} target="_blank" rel="noopener noreferrer">
+                        <a href={voucher.url} target="_blank" rel="noopener noreferrer">
                           Comprobante
                         </a>
                       </td>
