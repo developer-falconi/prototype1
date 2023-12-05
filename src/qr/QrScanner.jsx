@@ -40,7 +40,7 @@ export default function QrCodeScanner() {
     }
 
     const ticketData = JSON.parse(qrCodeData.text);
-    
+
     if (!ticketData.clientId || !ticketData.ticketId || !ticketData.dni || !ticketData.client) {
       return Swal.fire({
         title: 'ENTRADA INVÁLIDA',
@@ -85,24 +85,6 @@ export default function QrCodeScanner() {
     return () => clearTimeout(timeoutId);
   }, [scanned]);
 
-  useEffect(() => {
-    // Access the rear camera
-    if (videoRef.current) {
-      const videoElement = videoRef.current.video;
-      const constraints = {
-        video: { facingMode: { exact: 'environment' } }
-      };
-
-      navigator.mediaDevices.getUserMedia(constraints)
-        .then((stream) => {
-          videoElement.srcObject = stream;
-        })
-        .catch((error) => {
-          console.error('Error accessing rear camera:', error);
-        });
-    }
-  }, []);
-
   return (
     <div>
       <QrScanner
@@ -111,6 +93,7 @@ export default function QrCodeScanner() {
         onError={handleError}
         onScan={handleScan}
         videoref={videoRef}
+        facingMode='rear'
         style={{ width: '100%', maxWidth: '400px' }}
       />
     </div>
