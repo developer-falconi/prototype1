@@ -93,7 +93,7 @@ export default function QrCodeScanner() {
         onError={handleError}
         onScan={handleScan}
         videoref={videoRef}
-        facingMode='rear'
+        constraints={{ facingMode: 'environment' }}
         style={{ width: '100%', maxWidth: '400px' }}
       />
     </div>
