@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import QrScanner from 'react-qr-scanner';
 import { tickets } from '../helpers/constants';
 import Swal from 'sweetalert2';
+import { DateTime } from 'luxon';
 
 export default function QrCodeScanner() {
   const videoRef = useRef(null);
@@ -57,7 +58,8 @@ export default function QrCodeScanner() {
         active: false,
         clientId: ticketData.clientId,
         name: ticketData.client,
-        dni: ticketData.dni
+        dni: ticketData.dni,
+        date: DateTime.now().setZone('America/Buenos_Aires').toISO()
       });
       return Swal.fire({
         title: 'PASA',
@@ -69,9 +71,9 @@ export default function QrCodeScanner() {
     if (existTicket && existTicket.used && !existTicket.active) {
       return Swal.fire({
         title: 'USADO',
-        text: `Usado \nNombre: ${existTicket.name} DNI: ${existTicket.dni}`,
-        icon: 'error',
-        timer: 2000,
+        html: `Nombre: ${existTicket.name} DNI: ${existTicket.dni}<br/>
+          Hora: ${DateTime.fromISO(existTicket.date).toFormat("dd/MM/yyyy HH:mm")}`,
+        icon: 'error'
       });
     }
   };
