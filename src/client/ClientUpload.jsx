@@ -198,7 +198,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                   <>
                     <Form.Group as={Col} className="info-alias">
                       <Form.Label className="fs-5">Transferir ${totalPrice.toFixed(2)}</Form.Label>
-                      <Form.Label className="fs-5">Alias: NeverFantom</Form.Label>
+                      <Form.Label className="fs-5">Alias: sbprimera</Form.Label>
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">
                       <Form.Label>Comprobante</Form.Label>

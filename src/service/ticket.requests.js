@@ -77,3 +77,16 @@ export const GET_PREVENTS = async () => {
     })
   }
 }
+
+export const GET_ACTIVE_PREVENT = async () => {
+  try {
+    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/get-active-prevent`, null, null)
+    return res.data
+  } catch (error) {
+    console.log(error)
+    return Swal.fire({
+      title: 'Error',
+      text: 'Intentalo devuelta'
+    })
+  }
+}
