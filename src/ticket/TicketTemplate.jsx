@@ -86,7 +86,7 @@ export default function TicketTemplate({ prevent }) {
               </div>
             </div>
             <div className="details-prevent">
-              <div className="total-value">${total}</div>
+              <p className="total-value">${total}</p>
               <button
                 className="comprar-button"
                 variant="success"
