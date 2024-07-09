@@ -4,7 +4,7 @@ import { cloudinaryImg } from '../helpers/cloudinary';
 import { useState } from 'react';
 import ClientUpload from '../client/ClientUpload';
 
-const teroImg = 'Vanellus/Tero_Negro_wupuho.png';
+const teroImg = 'Tero_Negro_1_vnffta.png';
 
 export default function TicketTemplate({ prevent }) {
 
