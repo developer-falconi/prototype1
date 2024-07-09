@@ -46,7 +46,7 @@ export default function TicketTemplate({ prevent }) {
             <div className="route">
               <h2>CSB</h2>
               <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt='tero' className='tero-img' />
-              <h2>ATL</h2>
+              <h2>1°B</h2>
             </div>
             <div className="details">
               <div className="item">
@@ -59,7 +59,7 @@ export default function TicketTemplate({ prevent }) {
               </div>
               <div className="item">
                 <span>Departure</span>
-                <h3>23/03/2024 12:00</h3>
+                <h3>13/07/2024 24:00</h3>
               </div>
               <div className="item">
                 <span>Gate Closes</span>
@@ -71,7 +71,7 @@ export default function TicketTemplate({ prevent }) {
               </div>
               <div className="item">
                 <span>Seat</span>
-                <h3>69P</h3>
+                <h3>3-C</h3>
               </div>
             </div>
           </div>
