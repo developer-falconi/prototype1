@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CREATE_QR, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
+import { CREATE_QR, GET_DOWNLOAD_EXCEL, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
 import { Button, Table, Tab, Tabs } from "react-bootstrap";
 import './admin.scss';
 import QRScanner from "../qr/QrScanner";
@@ -33,6 +33,10 @@ export default function AdminTickets() {
       console.error("Error fetching tickets:", error);
     }
   }, []);
+
+  const handleDownloadExcel = async () => {
+    await GET_DOWNLOAD_EXCEL();
+  }
 
   const handleCreateQr = async (voucher) => {
     const createTicketsData = {
@@ -74,14 +78,15 @@ export default function AdminTickets() {
   }, [getPrevents]);
   return (
     <>
-    <div className="scanner">
-      <Button onClick={handleScan}>Escanear</Button>
-      {scan && <Button variant="secondary" onClick={() => setScan(false)}>Cerrar</Button>}
-    </div>
-    <div className="used">
-      <Button onClick={handleUsedQr}>QR usados</Button>
-      {showUsed && <Button variant="secondary" onClick={() => setShowUsed(false)}>Cerrar</Button>}
-    </div>
+      <Button onClick={handleDownloadExcel}>Descargar excel</Button>
+      <div className="scanner">
+        <Button onClick={handleScan}>Escanear</Button>
+        {scan && <Button variant="secondary" onClick={() => setScan(false)}>Cerrar</Button>}
+      </div>
+      <div className="used">
+        <Button onClick={handleUsedQr}>QR usados</Button>
+        {showUsed && <Button variant="secondary" onClick={() => setShowUsed(false)}>Cerrar</Button>}
+      </div>
       {showUsed && <UsedTickets usedTickets={usedTickets} />}
       <Tabs
         id="preventas-tabs"

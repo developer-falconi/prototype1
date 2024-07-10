@@ -90,3 +90,21 @@ export const GET_ACTIVE_PREVENT = async () => {
     })
   }
 }
+
+export const GET_DOWNLOAD_EXCEL = async () => {
+  try {
+    const response = await axios.get(`${VANELLUS_BE}/ticket/download`, {
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'entradas.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+  } catch (error) {
+    console.error('Error downloading the file', error);
+  }
+}
