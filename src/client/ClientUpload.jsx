@@ -19,6 +19,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
   const schema = yup.object().shape({
     fullName: yup.string().required('Nombre necesario').min(8, 'Esta bien??'),
     dni: yup.string().required('DNI necesario').min(8, 'Esta bien??'),
+    sexo: yup.string().required('Sexo es requerido').oneOf(['HOMBRE', 'MUJER'], 'Seleccione una opción válida'),
     comprobante: yup.mixed().required('Comprobante necesario').test(
       'is-file-type',
       'Solo se permiten archivos de imagen o PDF',
@@ -31,9 +32,10 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
   });
 
   const handleAddClient = (values, setFieldValue) => {
-    setClients((prevCli) => [...prevCli, { fullName: values.fullName, dni: values.dni }])
+    setClients((prevCli) => [...prevCli, { fullName: values.fullName, dni: values.dni, sexo: values.sexo }])
     setFieldValue('fullName', '')
     setFieldValue('dni', '')
+    setFieldValue('sexo', '')
   }
 
   const handleDeleteClient = (indexDelete) => {
@@ -122,6 +124,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
             dni: '',
             comprobante: '',
             email: '',
+            sexo: ''
           }}
           onSubmit={handleCreateTicket}
         >
@@ -141,7 +144,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                   return (
                     <ListGroup.Item key={index}>
                       <p>
-                        {`${client.fullName} / ${client.dni}`}
+                        {`${client.fullName} / ${client.dni} / ${client.sexo}`}
                       </p>
                       <FiTrash2 onClick={() => handleDeleteClient(index)} />
                     </ListGroup.Item>
@@ -180,10 +183,30 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                       </Form.Control.Feedback>
                     </Form.Group>
 
+                    <Form.Group as={Col} controlId="validationFormikSexo" className="mb-4">
+                      <Form.Label>Sexo</Form.Label>
+                      <Form.Control
+                        className="w-25"
+                        as="select"
+                        name="sexo"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.sexo}
+                        isInvalid={!!errors.sexo}
+                      >
+                        <option value="">Seleccione</option>
+                        <option value="HOMBRE">HOMBRE</option>
+                        <option value="MUJER">MUJER</option>
+                      </Form.Control>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.sexo}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
                     <Form.Group as={Col} controlId="validationFormikAddClient">
                       <Button
                         className="mt-0 mb-3"
-                        disabled={!(values.fullName && values.dni) || !!errors.fullName || !!errors.dni}
+                        disabled={!(values.fullName && values.dni && values.sexo) || !!errors.fullName || !!errors.dni || !!errors.sexo}
                         onClick={(e) => {
                           handleAddClient(values, setFieldValue)
                         }}>
@@ -272,6 +295,6 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
           )}
         </Formik>
       </Modal.Body>
-    </Modal>
+    </Modal >
   );
 }

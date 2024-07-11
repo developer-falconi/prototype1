@@ -9,7 +9,7 @@ const VANELLUS_UPLOAD = process.env.REACT_APP_VANELLUS_UPLOAD
 
 export const CREATE_TICKET = async (clientData) => {
   try {
-    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/create`, null, clientData)
+    const res = await request(Methods.POST, `http://localhost:4001/ticket/create`, null, clientData)
     return res.data
   } catch (error) {
     console.log(error)
