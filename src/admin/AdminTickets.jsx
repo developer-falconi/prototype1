@@ -34,9 +34,9 @@ export default function AdminTickets() {
     }
   }, []);
 
-  const handleDownloadExcel = async () => {
-    await GET_DOWNLOAD_EXCEL();
-  }
+  // const handleDownloadExcel = async () => {
+  //   await GET_DOWNLOAD_EXCEL();
+  // }
 
   const handleCreateQr = async (voucher) => {
     const createTicketsData = {
