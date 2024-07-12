@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CREATE_QR, GET_DOWNLOAD_EXCEL, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
+import { CREATE_QR, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
 import { Button, Table, Tab, Tabs } from "react-bootstrap";
 import './admin.scss';
 import QRScanner from "../qr/QrScanner";
