@@ -78,7 +78,7 @@ export default function AdminTickets() {
   }, [getPrevents]);
   return (
     <>
-      <Button onClick={handleDownloadExcel}>Descargar excel</Button>
+      {/* <Button onClick={handleDownloadExcel}>Descargar excel</Button> */}
       <div className="scanner">
         <Button onClick={handleScan}>Escanear</Button>
         {scan && <Button variant="secondary" onClick={() => setScan(false)}>Cerrar</Button>}
