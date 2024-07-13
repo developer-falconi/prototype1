@@ -4,21 +4,18 @@ import { GET_ACTIVE_PREVENT } from "../service/ticket.requests";
 import Loader from "../loader/Loader";
 import { AdvancedImage } from "@cloudinary/react";
 import { cloudinaryImg } from "../helpers/cloudinary";
-import TicketTemplate from "./TicketTemplate";
+// import TicketTemplate from "./TicketTemplate";
 
 const img = 'Flyercrop.jpg'
 const img2 = 'Flyer.jpg'
 // const img3 = 'Vanellus/Ppal/f03e7805-0443-4b90-be25-414c3f5ef007_variated_wkxufe'
 
 export default function TicketMain() {
-
-  const [prevent, setPrevent] = useState();
   const [isLoading, setIsLoading] = useState([]);
 
   const getActivePrevent = useCallback(async () => {
     await GET_ACTIVE_PREVENT().then((res) => {
       setIsLoading(false)
-      setPrevent(res)
     })
   }, [])
 
