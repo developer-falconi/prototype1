@@ -36,14 +36,16 @@ export default function TicketMain() {
         ) : (
           <>
             <div className="prevent-tickets">
-              <TicketTemplate prevent={prevent} />
-              <h2 className="info-help">
+              <span className="sold-out">AGOTADO</span>
+
+              {/* <TicketTemplate prevent={prevent} /> */}
+              {/* <h2 className="info-help">
                 Por cualquier problema comunicarse con <a
                   href="https://wa.me/+5491138312454?text=Hola!%20Necesito%20entradas%20para%20la%20Vanellus"
                   rel="noreferrer"
                   target="_blank"
                 >Genaro</a>
-              </h2>
+              </h2> */}
             </div>
             <AdvancedImage cldImg={cloudinaryImg(window.innerWidth > 521 ? img : img2)} alt='img' className='flyer-img' />
           </>
