@@ -64,7 +64,8 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
       prevent: prevent._id,
       total: totalPrice
     }
-
+    setFileUrl(null);
+    setFieldValue('comprobante', null)
     await CREATE_TICKET(dataParsed).then((res) => {
       setIsLoading(false);
       setShowCreate(false);
