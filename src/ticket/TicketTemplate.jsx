@@ -3,11 +3,11 @@ import './ticket-template.scss';
 import { cloudinaryImg } from '../helpers/cloudinary';
 import { useState } from 'react';
 import ClientUpload from '../client/ClientUpload';
+import { formatPrice } from '../helpers/constants';
 
 const teroImg = 'Tero_Negro_1_vnffta.png';
 
 export default function TicketTemplate({ prevent }) {
-
   const [qtity, setQtity] = useState(1);
   const [total, setTotal] = useState(prevent?.price);
   const [totalClients, setTotalClients] = useState(qtity);
@@ -20,7 +20,7 @@ export default function TicketTemplate({ prevent }) {
       setTotal(prevent.price * newQtity);
       setTotalClients(newQtity);
     }
-  }
+  };
 
   const handlePlusQtity = () => {
     if (qtity < 10) {
@@ -29,74 +29,61 @@ export default function TicketTemplate({ prevent }) {
       setTotal(prevent.price * newQtity);
       setTotalClients(newQtity);
     }
-  }
+  };
 
   const handleUploadClients = () => {
     setShowCreate(true);
-  }
+  };
 
   return (
-    <main className="ticket-system">
-      <div className="top">
-        <div className="printer" />
-      </div>
-      <div className="receipts-wrapper">
-        <div className="receipts">
-          <div className="receipt">
-            <div className="route">
-              <h2>CSB</h2>
-              <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt='tero' className='tero-img' />
-              <h2>1°B</h2>
-            </div>
-            <div className="details">
-              <div className="item">
-                <span>Party</span>
-                <h3>Vanellus</h3>
-              </div>
-              <div className="item">
-                <span>No.</span>
-                <h3>V</h3>
-              </div>
-              <div className="item">
-                <span>Departure</span>
-                <h3>13/07/2024 24:00</h3>
-              </div>
-              <div className="item">
-                <span>Gate Closes</span>
-                <h3>02:00</h3>
-              </div>
-              <div className="item">
-                <span>Luggage</span>
-                <h3>Barra Libre</h3>
-              </div>
-              <div className="item">
-                <span>Seat</span>
-                <h3>3-C</h3>
-              </div>
-            </div>
+    <main className="new-ticket-system">
+      <div className="ticket-card">
+        <div className="ticket-header">
+          <h2 className="location">CSB</h2>
+          <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt="tero" className="logo-img" />
+          <h2 className="seat-number">1°B</h2>
+        </div>
+        <div className="ticket-details">
+          <div className="detail">
+            <span>Party:</span>
+            <p>Fiesta Fin De Año</p>
           </div>
-          <div className="receipt qr-code">
-            <div className="title-default">
-              <h2 className="name-default">{prevent.name}</h2>
-              <p className='price-default'>${prevent.price}</p>
-              <div className="qtity-buttons">
-                <button className="minus-btn" onClick={handleMinusQtity}>-</button>
-                <span className="qtity-value">{qtity}</span>
-                <button className="plus-btn" onClick={handlePlusQtity}>+</button>
-              </div>
-            </div>
-            <div className="details-prevent">
-              <p className="total-value">${total}</p>
-              <button
-                className="comprar-button"
-                variant="success"
-                onClick={handleUploadClients}
-                disabled={!prevent.active || qtity === 0}
-              >
-                Comprar
-              </button>
-            </div>
+          <div className="detail">
+            <span>No.:</span>
+            <p>VII</p>
           </div>
+          <div className="detail">
+            <span>Departure:</span>
+            <p>21/12/2024 23:30</p>
+          </div>
+          <div className="detail">
+            <span>Gate Closes:</span>
+            <p>02:00</p>
+          </div>
+          <div className="detail">
+            <span>Luggage:</span>
+            <p>Barra Libre</p>
+          </div>
+          <div className="detail">
+            <span>Seat:</span>
+            <p>1-B</p>
+          </div>
+        </div>
+        <div className="ticket-footer">
+          <h3>{prevent?.name} | {formatPrice(prevent?.price)}</h3>
+          <div className="quantity-controls">
+            <button className="minus-btn" onClick={handleMinusQtity}>-</button>
+            <span>{qtity}</span>
+            <button className="plus-btn" onClick={handlePlusQtity}>+</button>
+          </div>
+          <p>Total: {formatPrice(total)}</p>
+          <button
+            className="purchase-btn"
+            onClick={handleUploadClients}
+            disabled={!prevent.active || qtity === 0}
+          >
+            Comprar
+          </button>
         </div>
       </div>
       <ClientUpload

@@ -1,243 +1,114 @@
-* {
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-.tero-img {
-  max-width: 5rem;
-}
+.new-ticket-system {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
 
-.ticket-system {
-  width: 25rem;
-
-  .top {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    .title {
-      font-weight: normal;
-      font-size: 1.6em;
-      text-align: left;
-      margin-left: 20px;
-      margin-bottom: 50px;
-      color: #fff;
-    }
-
-    .printer {
-      width: 90%;
-      height: 20px;
-      border: 5px solid #fff;
-      border-radius: 10px;
-      box-shadow: 1px 3px 3px 0px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  .receipts-wrapper {
+  .ticket-card {
+    background: #fff;
+    border-radius: 16px;
+    width: 320px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    margin-top: -10px;
-    padding-bottom: 10px;
-  }
 
-  .receipts {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    transform: translateY(-510px);
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #444040;
+      color: #fff;
+      padding: 20px;
+      font-size: 1.2rem;
 
-    animation-duration: 2.5s;
-    animation-delay: 500ms;
-    animation-name: print;
-    animation-fill-mode: forwards;
-
-
-    .receipt {
-      padding: 20px 30px;
-      text-align: left;
-      min-height: 200px;
-      width: 88%;
-      background-color: #fff;
-      border-radius: 10px 10px 20px 20px;
-      box-shadow: 1px 3px 8px 3px rgba(0, 0, 0, 0.2);
-
-      .airliner-logo {
-        max-width: 80px;
+      .logo-img {
+        max-width: 50px;
       }
 
-      .route {
+      .location,
+      .seat-number {
+        margin: 0;
+        font-weight: bold;
+      }
+    }
+
+    .ticket-details {
+      padding: 20px;
+      background-color: #f9f9f9;
+
+      .detail {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 9px;
+        margin-bottom: 8px;
 
-        .plane-icon {
-          width: 30px;
-          height: 30px;
-          transform: rotate(90deg);
+        span {
+          font-weight: bold;
+          color: #333;
         }
 
-        h2 {
-          font-weight: 300;
-          font-size: 2.2em;
+        p {
           margin: 0;
+          color: #555;
         }
       }
+    }
 
-      .details {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
+    .ticket-footer {
+      padding: 20px;
+      text-align: center;
 
-        .item {
-          display: flex;
-          flex-direction: column;
-          min-width: 70px;
-
-          span {
-            font-size: .8em;
-            color: rgba(28, 28, 28, .7);
-            font-weight: 500;
-          }
-
-          h3 {
-            margin-top: 10px;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-          }
-        }
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.2rem;
+        color: #444;
       }
 
-      &.qr-code {
-        height: 130px;
-        min-height: unset;
-        position: relative;
-        border-radius: 20px 20px 10px 10px;
+      .quantity-controls {
         display: flex;
+        justify-content: center;
         align-items: center;
-        justify-content: space-between;
-        flex-direction: column;
+        margin: 10px 0;
 
-        //TODO: replace with svg
-        &::before {
-          content: '';
-          background: linear-gradient(to right, #fff 50%, #149f15 50%);
-          background-size: 22px 4px, 100% 4px;
-          height: 4px;
-          width: 90%;
-          display: block;
-          left: 0;
-          right: 0;
-          top: -1px;
-          position: absolute;
-          margin: auto;
-        }
-
-        .qr {
-          width: 70px;
-          height: 70px;
-        }
-
-        .title-default {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-
-          h2 {
-            font-size: 1.2rem;
-            margin: 0;
-          }
-
-          p {
-            margin: 0;
-            font-weight: 500;
-          }
-        }
-
-        .details-prevent {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          width: 100%;
-        }
-
-        .title-default {
-          flex-grow: 0.5;
-        }
-
-        .name-default {
-          margin-top: 0;
-        }
-
-        .price-default {
-          margin: 5px 0;
-        }
-
-        .qtity-buttons {
-          display: flex;
-          align-items: center;
-        }
-
-        .qtity-buttons button {
-          background-color: #444040;
+        button {
+          background: #444040;
           color: #fff;
           border: none;
           border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          font-size: 16px;
-          cursor: pointer;
-          margin: 0 5px;
+          width: 32px;
+          height: 32px;
           display: flex;
           justify-content: center;
-        }
-
-        .details-prevent {
-          display: flex;
-          justify-content: space-around;
           align-items: center;
-        }
-
-        .total-value {
-          font-weight: bold;
-          margin: 0;
-          font-size: 1.3rem;
-        }
-
-        .comprar-button {
-          background-color: #444040;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          padding: 5px 10px;
-          font-size: 16px;
           cursor: pointer;
         }
 
-        .comprar-button:disabled {
-          background-color: #6c757d;
+        span {
+          margin: 0 10px;
+          font-weight: bold;
+        }
+      }
+
+      p {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #444;
+      }
+
+      .purchase-btn {
+        background: #149f15;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+
+        &:disabled {
+          background: #ccc;
           cursor: not-allowed;
         }
-
       }
     }
-  }
-}
-
-@keyframes print {
-  0% {
-    transform: translateY(-510px)
-  }
-
-  35% {
-    transform: translateY(-395px);
-  }
-
-  70% {
-    transform: translateY(-140px);
-  }
-
-  100% {
-    transform: translateY(0);
   }
 }
