@@ -6,9 +6,8 @@ import { AdvancedImage } from "@cloudinary/react";
 import { cloudinaryImg } from "../helpers/cloudinary";
 import TicketTemplate from "./TicketTemplate";
 
-const img = 'Flyercrop1.jpg'
-const img2 = 'Flyer1.jpg'
-// const img3 = 'Vanellus/Ppal/f03e7805-0443-4b90-be25-414c3f5ef007_variated_wkxufe'
+const img = 'WhatsApp_Image_2024-12-13_at_11.48.23_vmtvv8.jpg'
+const img2 = 'WhatsApp_Image_2024-12-13_at_11.48.232_fd0euk.jpg'
 
 export default function TicketMain() {
   const [isLoading, setIsLoading] = useState([]);
