@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ClientUpload from '../client/ClientUpload';
 import { formatPrice } from '../helpers/constants';
 
-const teroImg = 'Tero_Negro_1_vnffta.png';
+const teroImg = 'Tero_Negro_1_n88cta.png';
 
 export default function TicketTemplate({ prevent }) {
   const [qtity, setQtity] = useState(1);
