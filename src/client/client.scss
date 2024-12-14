@@ -38,9 +38,16 @@
 }
 
 .info-alias {
-  flex-direction: unset;
-  gap: 2rem;
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.alias {
+  display: flex;
+  font-size: 18px;
+  gap: 1rem;
 }
 
 .list-group {
