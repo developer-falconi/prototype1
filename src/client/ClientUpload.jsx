@@ -47,6 +47,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     setClients([]);
     setTotalPrice(prevent.price);
     setTotalClients(1);
+    setFileUrl(null);
   }
 
   const handleAddComprobante = (e, setFieldValue) => {
@@ -222,7 +223,10 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                   <>
                     <Form.Group as={Col} className="info-alias">
                       <Form.Label className="fs-5">Transferir ${totalPrice.toFixed(2)}</Form.Label>
-                      <Form.Label className="fs-5">Alias: vanellusmp</Form.Label>
+                      <div className="alias">
+                        <Form.Label>Hombres: sbprimera.hom</Form.Label>
+                        <Form.Label>Mujeres: sbprimera.muj</Form.Label>
+                      </div>
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">
                       <Form.Label>Comprobante</Form.Label>
