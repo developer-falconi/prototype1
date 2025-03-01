@@ -47,7 +47,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     setClients([]);
     setTotalPrice(prevent.price);
     setTotalClients(1);
-    setFileUrl(null);
+    setFileUrl('');
   }
 
   const handleAddComprobante = (e, setFieldValue) => {
@@ -65,8 +65,6 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
       prevent: prevent._id,
       total: totalPrice
     }
-    setFileUrl(null);
-    setFieldValue('comprobante', null)
     await CREATE_TICKET(dataParsed).then((res) => {
       setIsLoading(false);
       setShowCreate(false);
@@ -75,6 +73,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
 
       setFieldValue('comprobante', '');
       setFieldValue('email', '');
+      setFileUrl('');
       if (res?._id) {
         return Swal.fire({
           title: 'Compra realizada con éxito',
@@ -97,10 +96,12 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
     formData.append('comprobante', file);
     // const fileEncoded = new URLSearchParams(formData).toString();
 
-    await UPLOAD_COMPROBANTE(formData).then((url) => {
-      setFileUrl(url);
-      setFieldValue('comprobante', file)
-      setIsUploading(false);
+    await UPLOAD_COMPROBANTE(formData).then((res) => {
+      if (res.success) {
+        setFileUrl(res.fileUrl);
+        setFieldValue('comprobante', file)
+        setIsUploading(false);
+      }
     })
 
   };

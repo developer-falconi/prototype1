@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ClientUpload from '../client/ClientUpload';
 import { formatPrice } from '../helpers/constants';
 
-const teroImg = 'Tero_Negro_1_n88cta.png';
+const teroImg = 'FlyerLogoCrop_lzzufk.png';
 
 export default function TicketTemplate({ prevent }) {
   const [qtity, setQtity] = useState(1);
@@ -39,34 +39,29 @@ export default function TicketTemplate({ prevent }) {
     <main className="new-ticket-system">
       <div className="ticket-card">
         <div className="ticket-header">
-          <h2 className="location">CSB</h2>
+          <h2 className="location">Envuelto</h2>
           <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt="tero" className="logo-img" />
-          <h2 className="seat-number">1°B</h2>
         </div>
         <div className="ticket-details">
           <div className="detail">
-            <span>Party:</span>
-            <p>Fiesta Fin De Año</p>
-          </div>
-          <div className="detail">
             <span>No.:</span>
-            <p>VII</p>
+            <p>I</p>
           </div>
           <div className="detail">
-            <span>Departure:</span>
-            <p>21/12/2024 23:30</p>
+            <span>Date:</span>
+            <p>22/03/2025</p>
           </div>
           <div className="detail">
-            <span>Gate Closes:</span>
-            <p>02:00</p>
+            <span>Hours:</span>
+            <p>00:00hs - 05:30</p>
           </div>
           <div className="detail">
-            <span>Luggage:</span>
-            <p>Barra Libre</p>
+            <span>Bar:</span>
+            <p>Open Bar</p>
           </div>
           <div className="detail">
-            <span>Seat:</span>
-            <p>1-B</p>
+            <span>Venue:</span>
+            <p>Open Air</p>
           </div>
         </div>
         <div className="ticket-footer">
