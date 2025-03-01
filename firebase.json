@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "project-envuelto",
     "public": "public",
     "ignore": [
       "firebase.json",
