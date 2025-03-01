@@ -5,7 +5,6 @@ import errorHandler from "../helpers/errorHandler"
 import axios from "axios"
 
 const VANELLUS_BE = process.env.REACT_APP_VANELLUS_BE
-const VANELLUS_UPLOAD = process.env.REACT_APP_VANELLUS_UPLOAD
 
 export const CREATE_TICKET = async (clientData) => {
   try {
@@ -20,7 +19,7 @@ export const UPLOAD_COMPROBANTE = async (comprobante) => {
   try {
     const config = {
       method: Methods.POST,
-      url: `${VANELLUS_UPLOAD}/upload`,
+      url: `${VANELLUS_BE}/comprobante/upload`,
       params: null,
       data: comprobante,
       headers: {
