@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import './ticket.scss';
-import { GET_ACTIVE_PREVENT } from "../service/ticket.requests";
+import { GET_ACTIVE_PREVENT, GET_EVENT_DATA } from "../service/ticket.requests";
 import Loader from "../loader/Loader";
 import { AdvancedImage } from "@cloudinary/react";
 import { cloudinaryImg } from "../helpers/cloudinary";
@@ -12,17 +12,20 @@ const img2 = 'FlyerLogo.jpg'
 export default function TicketMain() {
   const [isLoading, setIsLoading] = useState([]);
   const [prevent, setPrevent] = useState();
-
-  const getActivePrevent = useCallback(async () => {
-    await GET_ACTIVE_PREVENT().then((res) => {
-      setIsLoading(false);
-      setPrevent(res);
-    })
-  }, [])
+  const [activeEvent, setActiveEvent] = useState();
 
   useEffect(() => {
-    getActivePrevent();
-  }, [getActivePrevent])
+    Promise.all([GET_ACTIVE_PREVENT(), GET_EVENT_DATA()])
+      .then(([preventRes, eventRes]) => {
+        setPrevent(preventRes);
+        setActiveEvent(eventRes);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error loading data:', error);
+        setIsLoading(false);
+      });
+  }, []);
 
   return (
     <div className="content-page">
@@ -34,7 +37,7 @@ export default function TicketMain() {
         ) : (
           <>
             <div className="prevent-tickets">
-              <TicketTemplate prevent={prevent} />
+              <TicketTemplate prevent={prevent} activeEvent={activeEvent} />
               <h2 className="info-help">
                 Por cualquier problema comunicarse con <a
                   href="https://wa.me/+54911<numero>?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto"

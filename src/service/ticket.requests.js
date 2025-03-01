@@ -51,7 +51,9 @@ export const VERIFY_TOKEN = async () => {
     const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/verify-token`, null, null)
     return res?.data
   } catch (error) {
-    return errorHandler(error)
+    console.log("Unauthorized: Logging out user and showing login modal", error);
+    localStorage.removeItem('token');
+    return null;
   }
 }
 
@@ -80,6 +82,19 @@ export const GET_PREVENTS = async () => {
 export const GET_ACTIVE_PREVENT = async () => {
   try {
     const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/get-active-prevent`, null, null)
+    return res.data
+  } catch (error) {
+    console.log(error)
+    return Swal.fire({
+      title: 'Error',
+      text: 'Intentalo devuelta'
+    })
+  }
+}
+
+export const GET_EVENT_DATA = async () => {
+  try {
+    const res = await request(Methods.GET, `${VANELLUS_BE}/ticket/event`, null, null)
     return res.data
   } catch (error) {
     console.log(error)

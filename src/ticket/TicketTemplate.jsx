@@ -4,10 +4,11 @@ import { cloudinaryImg } from '../helpers/cloudinary';
 import { useState } from 'react';
 import ClientUpload from '../client/ClientUpload';
 import { formatPrice } from '../helpers/constants';
+import { DateTime } from 'luxon';
 
 const teroImg = 'FlyerLogoCrop_lzzufk.png';
 
-export default function TicketTemplate({ prevent }) {
+export default function TicketTemplate({ prevent, activeEvent }) {
   const [qtity, setQtity] = useState(1);
   const [total, setTotal] = useState(prevent?.price);
   const [totalClients, setTotalClients] = useState(qtity);
@@ -35,33 +36,35 @@ export default function TicketTemplate({ prevent }) {
     setShowCreate(true);
   };
 
+  const formattedDate = DateTime.fromISO(activeEvent.date).toFormat("dd-MM-yyyy");
+
   return (
     <main className="new-ticket-system">
       <div className="ticket-card">
         <div className="ticket-header">
-          <h2 className="location">Envuelto</h2>
+          <h2 className="location">{activeEvent.name}</h2>
           <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt="tero" className="logo-img" />
         </div>
         <div className="ticket-details">
           <div className="detail">
             <span>No.:</span>
-            <p>I</p>
+            <p>{activeEvent.number}</p>
           </div>
           <div className="detail">
             <span>Date:</span>
-            <p>22/03/2025</p>
+            <p>{formattedDate}</p>
           </div>
           <div className="detail">
             <span>Hours:</span>
-            <p>00:00hs - 05:30</p>
+            <p>{activeEvent.hours}</p>
           </div>
           <div className="detail">
             <span>Bar:</span>
-            <p>Open Bar</p>
+            <p>{activeEvent.bar}</p>
           </div>
           <div className="detail">
             <span>Venue:</span>
-            <p>Open Air</p>
+            <p>{activeEvent.venue}</p>
           </div>
         </div>
         <div className="ticket-footer">
