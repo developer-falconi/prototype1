@@ -11,6 +11,7 @@ jobs:
     env:
       PROJECT_ID: project-envuelto
       REGION: southamerica-east1
+      # No need for FIREBASE_TOKEN since we'll use service account credentials
 
     steps:
       - name: Checkout code
