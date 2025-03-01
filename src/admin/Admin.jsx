@@ -32,20 +32,22 @@ export default function Admin() {
       console.log(error)
     }
   }
-
   useEffect(() => {
     const verifyToken = async () => {
-      await VERIFY_TOKEN()
-        .then((res) => {
-          setValidToken(res);
-        });
+      const res = await VERIFY_TOKEN();
+      if (res) {
+        setValidToken(true);
+        setShowLogin(false);
+      } else {
+        setValidToken(false);
+        setShowLogin(true);
+      }
     }
 
     if (token) {
-      verifyToken()
+      verifyToken();
     }
-
-  }, [token])
+  }, [token]);
 
   return (
     <div className="content-page">
