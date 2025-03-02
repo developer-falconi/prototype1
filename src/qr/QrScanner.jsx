@@ -1,106 +1,96 @@
-import { useEffect, useRef, useState } from 'react';
-import QrScanner from 'react-qr-scanner';
-import { tickets } from '../helpers/constants';
-import Swal from 'sweetalert2';
-import { DateTime } from 'luxon';
+import { useRef, useState, useEffect } from "react";
+import { Button, Spinner, Alert } from "react-bootstrap";
+import { VALIDATE_QR } from "../service/ticket.requests";
+import "./qrSection.scss";
+import QrScanner from "qr-scanner";
 
-export default function QrCodeScanner() {
-  const videoRef = useRef(null);
-  const [scanned, setScanned] = useState(false);
-  const [scannerKey, setScannerKey] = useState(0);
+export default function QrSection() {
+  const scanner = useRef();
+  const videoEl = useRef(null);
+  const qrBoxEl = useRef(null);
+  const [qrOn, setQrOn] = useState(true);
+  const [scannedResult, setScannedResult] = useState("");
+  const [validationFired, setValidationFired] = useState(false);
 
-  const handleScan = (data) => {
-    if (data && !scanned) {
-      setScanned(true);
-      handleQrCodeDetected(data);
+  // Success callback: fires validation only once.
+  const onScanSuccess = async (result) => {
+    console.log(result);
+    if (validationFired) return; // Prevent multiple validations
+    if (result && result.data) {
+      setValidationFired(true);
+      const validation = await VALIDATE_QR(result.data);
+      console.log(validation);
+      setScannedResult(result.data);
     }
   };
 
-  const isValidJSON = (str) => {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  const handleError = (err) => {
-    console.error(err);
-  };
-
-  const handleQrCodeDetected = (qrCodeData) => {
-    const isValid = isValidJSON(qrCodeData.text);
-
-    if (!isValid) {
-      return Swal.fire({
-        title: 'ENTRADA INVÁLIDA',
-        icon: 'error',
-        timer: 2000,
-      });
-    }
-
-    const ticketData = JSON.parse(qrCodeData.text);
-
-    if (!ticketData.clientId || !ticketData.ticketId || !ticketData.dni || !ticketData.client) {
-      return Swal.fire({
-        title: 'ENTRADA INVÁLIDA',
-        icon: 'error',
-        timer: 2000,
-      });
-    }
-    const existTicket = tickets.find((elem) => elem.id === ticketData.ticketId && elem.clientId === ticketData.clientId);
-
-    if (!existTicket) {
-      tickets.push({
-        id: ticketData.ticketId,
-        used: true,
-        active: false,
-        clientId: ticketData.clientId,
-        name: ticketData.client,
-        dni: ticketData.dni,
-        date: DateTime.now().setZone('America/Buenos_Aires').toISO()
-      });
-      return Swal.fire({
-        title: 'PASA',
-        text: `Nombre: ${ticketData.client} DNI: ${ticketData.dni}`,
-        icon: 'success',
-        timer: 2000,
-      });
-    }
-    if (existTicket && existTicket.used && !existTicket.active) {
-      return Swal.fire({
-        title: 'USADO',
-        html: `Nombre: ${existTicket.name} DNI: ${existTicket.dni}<br/>
-          Hora: ${DateTime.fromISO(existTicket.date).toFormat("dd/MM/yyyy HH:mm")}`,
-        icon: 'error'
-      });
-    }
+  // Fail callback.
+  const onScanFail = (err) => {
+    console.log(err);
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setScanned(false);
-    }, 2000);
-    setScannerKey((prevKey) => prevKey + 1);
+    if (videoEl?.current && !scanner.current) {
+      scanner.current = new QrScanner(videoEl?.current, onScanSuccess, {
+        onDecodeError: onScanFail,
+        preferredCamera: "environment",
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
+        overlay: qrBoxEl?.current || undefined,
+      });
 
-    return () => clearTimeout(timeoutId);
-  }, [scanned]);
+      scanner?.current
+        ?.start()
+        .then(() => setQrOn(true))
+        .catch((err) => {
+          if (err) setQrOn(false);
+        });
+    }
+
+    return () => {
+      if (!videoEl?.current) {
+        scanner?.current?.stop();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!qrOn)
+      alert(
+        "Camera is blocked or not accessible. Please allow camera in your browser permissions and Reload."
+      );
+  }, [qrOn]);
 
   return (
-    <div>
-      <QrScanner
-        key={scannerKey}
-        delay={300}
-        onError={handleError}
-        onScan={handleScan}
-        videoref={videoRef}
-        constraints={{
-          audio: false,
-          video: { facingMode: "environment" }
-        }}
-        style={{ width: '100%', maxWidth: '400px' }}
-      />
+    <div className="qr-reader">
+      {/* QR */}
+      <video ref={videoEl} className="video-box"></video>
+      <div ref={qrBoxEl} className="qr-box">
+        {!videoEl?.current && (
+          <img
+            src="/static/images/icons/scan_qr1.svg"
+            alt="Qr Frame"
+            width={256}
+            height={256}
+            className="qr-frame"
+          />
+        )}
+      </div>
+
+      {/* Show Data Result if scan is success */}
+      {scannedResult && (
+        <p
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 99999,
+            color: "white",
+          }}
+        >
+          Scanned Result: {scannedResult}
+        </p>
+      )}
     </div>
   );
 }

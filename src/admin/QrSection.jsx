@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from "react";
-import { Button, Spinner, Alert } from "react-bootstrap";
 import { VALIDATE_QR } from "../service/ticket.requests";
 import "./qrSection.scss";
 import QrScanner from "qr-scanner";
@@ -42,8 +41,8 @@ export default function QrSection() {
           if (err) setQrOn(false);
         });
     }
-
     return () => {
+      // eslint-disable-next-line
       if (!videoEl?.current) {
         scanner?.current?.stop();
       }
