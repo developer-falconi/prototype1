@@ -16,6 +16,14 @@
   background-color: #ededed;
 }
 
+.loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.5rem;
+}
+
 @media screen and (max-width: 512px) {
   .content-page {
     background-color: #494949;

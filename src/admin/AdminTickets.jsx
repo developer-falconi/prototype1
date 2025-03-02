@@ -1,49 +1,52 @@
 import { useCallback, useEffect, useState } from "react";
-import { CREATE_QR, GET_PREVENTS, GET_TICKETS } from "../service/ticket.requests";
-import { Button, Table, Tab, Tabs } from "react-bootstrap";
-import './admin.scss';
-import QRScanner from "../qr/QrScanner";
-import { FaSquareCheck } from "react-icons/fa6";
-import { tickets } from "../helpers/constants";
-import UsedTickets from "./UsedTickets";
+import { GET_TICKETS, CREATE_QR, GET_PREVENTS } from "../service/ticket.requests";
+import {
+  Navbar,
+  Container,
+  Nav,
+  Form,
+  Card,
+} from "react-bootstrap";
+import "./admin.scss";
+import EntradasSection from "./EntradasSection";
 
 export default function AdminTickets() {
-
   const [clients, setClients] = useState([]);
   const [prevents, setPrevents] = useState([]);
-  const [scan, setScan] = useState(false);
-  const [activePreventa, setActivePreventa] = useState(null);
-  const [showUsed, setShowUsed] = useState(false);
-  const [usedTickets, setUsedTickets] = useState([]);
+  const [activePrevent, setActivePrevent] = useState(null);
 
-  const getClients = useCallback(async (prevent) => {
+  // Fetch all prevents
+  const getPrevents = useCallback(async () => {
     try {
-      const response = await GET_TICKETS(prevent);
+      const response = await GET_PREVENTS();
+      setPrevents(response);
+
+      // Default to the first prevent if it exists
+      if (response && response.length > 0) {
+        setActivePrevent(response[0].prevent._id);
+      }
+    } catch (error) {
+      console.error("Error fetching prevents:", error);
+    }
+  }, []);
+
+  // Fetch clients (tickets) for a given prevent ID
+  const getClients = useCallback(async (preventId) => {
+    try {
+      if (!preventId) return;
+      const response = await GET_TICKETS(preventId);
       setClients(response);
     } catch (error) {
       console.error("Error fetching tickets:", error);
     }
   }, []);
 
-  const getPrevents = useCallback(async () => {
-    try {
-      const response = await GET_PREVENTS();
-      setPrevents(response);
-    } catch (error) {
-      console.error("Error fetching tickets:", error);
-    }
-  }, []);
-
-  // const handleDownloadExcel = async () => {
-  //   await GET_DOWNLOAD_EXCEL();
-  // }
-
+  // Generate a QR code for clients who don't have one
   const handleCreateQr = async (voucher) => {
     const createTicketsData = {
       clients: voucher.clients,
-      email: voucher.email
-    }
-
+      email: voucher.email,
+    };
     const clientsUpdated = await CREATE_QR(createTicketsData);
     const updatedVouchers = clients.map((prevCli) =>
       prevCli._id === voucher._id
@@ -53,95 +56,59 @@ export default function AdminTickets() {
     setClients(updatedVouchers);
   };
 
-  const handleScan = () => {
-    setScan(true);
-    setActivePreventa(null);
-    setShowUsed(false);
-  };
-
-  const handleTabSelect = (preventaId) => {
-    setScan(false);
-    setActivePreventa(preventaId);
-    getClients(preventaId);
-    setShowUsed(false);
-  };
-
-  const handleUsedQr = () => {
-    setScan(false);
-    setUsedTickets(tickets);
-    setShowUsed(true);
-    setActivePreventa(null);
-  };
-
+  // When component mounts, load prevents
   useEffect(() => {
     getPrevents();
   }, [getPrevents]);
+
+  // Whenever activePrevent changes, fetch its tickets
+  useEffect(() => {
+    if (activePrevent) {
+      getClients(activePrevent);
+    }
+  }, [activePrevent, getClients]);
+
   return (
-    <>
-      {/* <Button onClick={handleDownloadExcel}>Descargar excel</Button> */}
-      <div className="scanner">
-        <Button onClick={handleScan}>Escanear</Button>
-        {scan && <Button variant="secondary" onClick={() => setScan(false)}>Cerrar</Button>}
-      </div>
-      <div className="used">
-        <Button onClick={handleUsedQr}>QR usados</Button>
-        {showUsed && <Button variant="secondary" onClick={() => setShowUsed(false)}>Cerrar</Button>}
-      </div>
-      {showUsed && <UsedTickets usedTickets={usedTickets} />}
-      <Tabs
-        id="preventas-tabs"
-        activeKey={activePreventa}
-        onSelect={handleTabSelect}
-      >
-        {prevents.map((elem) => (
-          <Tab
-            key={elem.prevent._id}
-            eventKey={elem.prevent._id}
-            title={`${elem.prevent.name} Clientes=${elem.totalClients} Importe=$${(elem.prevent.price * elem.totalClients).toFixed(2)}`}
-          >
-            {
-              activePreventa && (
-                <Table striped bordered hover className="clients-to-approve">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Dni</th>
-                      <th>Email</th>
-                      <th>QR</th>
-                      <th>Ticket</th>
-                      <th>Comprobante</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clients.map((voucher, voucherIndex) => (
-                      voucher.clients.map((client, clientIndex) => (
-                        <tr key={`${voucherIndex}-${clientIndex}`}>
-                          <td>{client.fullName}</td>
-                          <td>{client.dni}</td>
-                          <td>{voucher.email}</td>
-                          <td>{client.ticket ? <img src={client.ticket.url} alt="qr" /> : 'No QR Code'}</td>
-                          <td>
-                            {client.ticket ?
-                              <FaSquareCheck />
-                              : <Button onClick={() => handleCreateQr(voucher)}>Crear</Button>
-                            }
-                          </td>
-                          <td>
-                            <a href={voucher.url} target="_blank" rel="noopener noreferrer">
-                              Comprobante
-                            </a>
-                          </td>
-                        </tr>
-                      ))
-                    ))}
-                  </tbody>
-                </Table>
-              )
-            }
-          </Tab>
-        ))}
-      </Tabs>
-      {scan && <QRScanner />}
-    </>
+    <div className="admin-container">
+      {/* Minimal Navbar */}
+      <Navbar expand="lg" variant="dark" className="admin-navbar">
+        <Container>
+          <Navbar.Brand>Envuelto Admin</Navbar.Brand>
+          <Nav className="ms-auto">
+            
+          </Nav>
+        </Container>
+      </Navbar>
+
+      {/* Main Content */}
+      <Container className="mt-4">
+        {/* Card for Prevent Selection */}
+        <Card className="shadow-sm mb-4">
+          <Card.Header className="fw-bold">Seleccionar Preventa</Card.Header>
+          <Card.Body>
+            <Form.Control
+              as="select"
+              value={activePrevent || ""}
+              onChange={(e) => setActivePrevent(e.target.value)}
+            >
+              {prevents.map((item) => (
+                <option key={item.prevent._id} value={item.prevent._id}>
+                  {item.prevent.name} (Clientes: {item.totalClients} - Importe: $
+                  {(item.prevent.price * item.totalClients).toFixed(2)})
+                </option>
+              ))}
+            </Form.Control>
+          </Card.Body>
+        </Card>
+
+        {/* Card for Entradas (Tickets) Table */}
+        <Card className="shadow-sm">
+          <Card.Header className="fw-bold">Entradas</Card.Header>
+          <Card.Body>
+            <EntradasSection clients={clients} onCreateQr={handleCreateQr} />
+          </Card.Body>
+        </Card>
+      </Container>
+    </div>
   );
 }
