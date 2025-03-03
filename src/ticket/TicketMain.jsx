@@ -39,11 +39,14 @@ export default function TicketMain() {
             <div className="prevent-tickets">
               <TicketTemplate prevent={prevent} activeEvent={activeEvent} />
               <h2 className="info-help">
-                Por cualquier problema comunicarse con <a
-                  href="https://wa.me/+54911<numero>?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto"
+                Por cualquier problema comunicarse con{" "}
+                <a
+                  href={`https://wa.me/${activeEvent.phone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
                   rel="noreferrer"
                   target="_blank"
-                >Ramiro</a>
+                >
+                  {activeEvent.contact}
+                </a>
               </h2>
             </div>
             <AdvancedImage cldImg={cloudinaryImg(window.innerWidth > 521 ? img : img2)} alt='img' className='flyer-img' />

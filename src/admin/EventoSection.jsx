@@ -44,25 +44,62 @@ export default function EventoSection() {
     );
   }
 
+  // If the event phone starts with +54911, remove that prefix for the 'phoneRest'
+  let phoneRest = "";
+  if (event.phone) {
+    if (event.phone.startsWith("+54911")) {
+      phoneRest = event.phone.slice(6); // remove +54911
+    } else {
+      phoneRest = event.phone;
+    }
+  }
+
   const initialValues = {
     name: event.name || "",
     number: event.number || "",
     date: event.date ? event.date.split("T")[0] : "",
     hours: event.hours || "",
     bar: event.bar || "",
-    venue: event.venue || ""
+    venue: event.venue || "",
+    contact: event.contact || "",
+    phoneRest: phoneRest ?? "",
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { resetForm }) => {
     setSubmitLoading(true);
     try {
-      const eventEdited = await EDIT_EVENT_DATA(event._id, values);
+      // Combine +54911 with the phoneRest value:
+      const fullPhone = "+54911" + (values.phoneRest || "");
+      // Prepare the payload. Remove phoneRest and add phone.
+      const payload = {
+        ...values,
+        phone: fullPhone,
+      };
+      delete payload.phoneRest;
+
+      const eventEdited = await EDIT_EVENT_DATA(event._id, payload);
       if (eventEdited) {
         setEvent(eventEdited);
         Swal.fire({
           title: "Evento actualizado correctamente",
           icon: "success",
-          timer: 2000
+          timer: 2000,
+        });
+        // Reset form values using the updated event data.
+        resetForm({
+          values: {
+            name: eventEdited.name || "",
+            number: eventEdited.number || "",
+            date: eventEdited.date ? eventEdited.date.split("T")[0] : "",
+            hours: eventEdited.hours || "",
+            bar: eventEdited.bar || "",
+            venue: eventEdited.venue || "",
+            contact: eventEdited.contact || "",
+            phoneRest:
+              eventEdited.phone && eventEdited.phone.startsWith("+54911")
+                ? eventEdited.phone.slice(6)
+                : eventEdited.phone || "",
+          },
         });
       }
     } catch (error) {
@@ -101,6 +138,15 @@ export default function EventoSection() {
             <div className="form-group">
               <label htmlFor="venue">Venue:</label>
               <Field type="text" name="venue" id="venue" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="contact">Contacto:</label>
+              <Field type="text" name="contact" id="contact" className="form-control" />
+            </div>
+            {/* Display prefix and let user type rest of the number */}
+            <div className="form-group">
+              <label>Teléfono: +54911</label>
+              <Field type="text" name="phoneRest" id="phoneRest" className="form-control" />
             </div>
             <div className="form-group submit-group">
               <Button

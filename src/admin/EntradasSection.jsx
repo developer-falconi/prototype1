@@ -48,6 +48,7 @@ export default function EntradasSection() {
     const createTicketsData = {
       clients: voucher.clients,
       email: voucher.email,
+      voucherId: voucher._id
     };
     try {
       const clientsUpdated = await CREATE_QR(createTicketsData);
