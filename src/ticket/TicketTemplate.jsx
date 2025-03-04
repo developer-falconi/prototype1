@@ -46,10 +46,10 @@ export default function TicketTemplate({ prevent, activeEvent }) {
           <AdvancedImage cldImg={cloudinaryImg(teroImg)} alt="tero" className="logo-img" />
         </div>
         <div className="ticket-details">
-          <div className="detail">
+          {/* <div className="detail">
             <span>No.:</span>
             <p>{activeEvent.number}</p>
-          </div>
+          </div> */}
           <div className="detail">
             <span>Date:</span>
             <p>{formattedDate}</p>
