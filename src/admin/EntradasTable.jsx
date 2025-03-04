@@ -91,34 +91,34 @@ export default function EntradasTable({
           </tr>
         </thead>
         <tbody>
-          {filteredVouchers.map((voucher) => {
-            // Determine if this voucher is currently "creating" or "regenerating"
-            const rowLoadingState = loadingRows[voucher._id] || null;
-            return (
-              <React.Fragment key={voucher._id}>
-                {/* Voucher Header Row */}
-                <tr
-                  className="voucher-row"
-                  style={{
-                    backgroundColor: VOUCHER_HEADER_COLOR,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => toggleVoucher(voucher._id)}
-                >
-                  <td colSpan={7}>
-                    {collapsedVouchers[voucher._id] ? (
-                      <FaChevronRight style={{ marginRight: "0.5rem" }} />
-                    ) : (
-                      <FaChevronDown style={{ marginRight: "0.5rem" }} />
-                    )}
-                    <strong>Voucher:</strong> {voucher._id} &nbsp;|&nbsp;
-                    <strong>Email:</strong> {voucher.email}
-                  </td>
-                </tr>
+          {filteredVouchers.map((voucher) => (
+            <React.Fragment key={voucher._id}>
+              {/* Voucher Header Row */}
+              <tr
+                className="voucher-row"
+                style={{
+                  backgroundColor: VOUCHER_HEADER_COLOR,
+                  cursor: "pointer",
+                }}
+                onClick={() => toggleVoucher(voucher._id)}
+              >
+                <td colSpan={7}>
+                  {collapsedVouchers[voucher._id] ? (
+                    <FaChevronRight style={{ marginRight: "0.5rem" }} />
+                  ) : (
+                    <FaChevronDown style={{ marginRight: "0.5rem" }} />
+                  )}
+                  <strong>Voucher:</strong> {voucher._id} &nbsp;|&nbsp;
+                  <strong>Email:</strong> {voucher.email}
+                </td>
+              </tr>
 
-                {/* Only show the voucher's clients if not collapsed */}
-                {!collapsedVouchers[voucher._id] &&
-                  voucher.clients.map((client, clientIndex) => (
+              {/* Only show the voucher's clients if not collapsed */}
+              {!collapsedVouchers[voucher._id] &&
+                voucher.clients.map((client, clientIndex) => {
+                  // Get loading state for this specific client.
+                  const clientLoadingState = loadingRows[client._id] || null;
+                  return (
                     <tr key={`${voucher._id}-${clientIndex}`}>
                       <td>{client.fullName}</td>
                       <td>{client.dni}</td>
@@ -139,9 +139,9 @@ export default function EntradasTable({
                         {client.ticket ? (
                           <Button
                             variant="outline-primary"
-                            onClick={() => onRegenerateQr(voucher)}
+                            onClick={() => onRegenerateQr(voucher, client)}
                           >
-                            {rowLoadingState === "regenerate" ? (
+                            {clientLoadingState === "regenerate" ? (
                               <Spinner animation="border" size="sm" />
                             ) : (
                               "Regenerar"
@@ -152,7 +152,7 @@ export default function EntradasTable({
                             variant="outline-primary"
                             onClick={() => onCreateQr(voucher)}
                           >
-                            {rowLoadingState === "create" ? (
+                            {loadingRows[voucher._id] === "create" ? (
                               <Spinner animation="border" size="sm" />
                             ) : (
                               "Crear"
@@ -170,10 +170,10 @@ export default function EntradasTable({
                         </a>
                       </td>
                     </tr>
-                  ))}
-              </React.Fragment>
-            );
-          })}
+                  );
+                })}
+            </React.Fragment>
+          ))}
         </tbody>
       </Table>
     </div>

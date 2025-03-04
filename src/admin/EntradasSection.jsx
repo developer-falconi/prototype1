@@ -104,23 +104,21 @@ export default function EntradasSection() {
   };
 
   // Regenerate a QR code
-  const handleRegenerateQr = async (voucher) => {
-    // Mark this voucher row as "regenerating"
-    setLoadingRows((prev) => ({ ...prev, [voucher._id]: "regenerate" }));
-
-    const createTicketsData = {
-      clients: voucher.clients,
-      email: voucher.email,
-      voucherId: voucher._id,
-    };
+  const handleRegenerateQr = async (voucher, client) => {
+    setLoadingRows((prev) => ({ ...prev, [client._id]: "regenerate" }));
 
     try {
-      const clientsUpdated = await REGENERATE_QR(createTicketsData);
-      if (clientsUpdated) {
-        const updatedVouchers = clients.map((prevCli) =>
-          prevCli._id === voucher._id
-            ? { ...prevCli, clients: clientsUpdated }
-            : prevCli
+      const updatedClient = await REGENERATE_QR(client);
+      if (updatedClient) {
+        const updatedVouchers = clients.map((prevVoucher) =>
+          prevVoucher._id === voucher._id
+            ? {
+              ...prevVoucher,
+              clients: prevVoucher.clients.map((prevClient) =>
+                prevClient._id === client._id ? updatedClient : prevClient
+              ),
+            }
+            : prevVoucher
         );
         setClients(updatedVouchers);
       } else {
@@ -135,8 +133,8 @@ export default function EntradasSection() {
       console.error("Error creating QR:", error);
     }
 
-    // Unset loading
-    setLoadingRows((prev) => ({ ...prev, [voucher._id]: null }));
+    // Unset loading for this client.
+    setLoadingRows((prev) => ({ ...prev, [client._id]: null }));
   };
 
   return (
