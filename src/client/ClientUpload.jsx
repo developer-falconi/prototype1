@@ -8,7 +8,16 @@ import { FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { useRef } from "react";
 
-export default function ClientUpload({ showCreate, setShowCreate, totalClients, setTotalClients, totalPrice, setTotalPrice, prevent }) {
+export default function ClientUpload({
+  showCreate,
+  setShowCreate,
+  totalClients,
+  setTotalClients,
+  totalPrice,
+  setTotalPrice,
+  prevent,
+  event
+}) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -59,7 +68,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
   const handleCreateTicket = async (ticketData, setFieldValue) => {
     setIsLoading(true);
     const dataParsed = {
-      email: ticketData.email,
+      email: ticketData.email?.toLowerCase(),
       clients: clients,
       cloudinaryUrl: fileUrl,
       prevent: prevent._id,
@@ -78,7 +87,7 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
         return Swal.fire({
           title: 'Compra realizada con éxito',
           icon: 'success',
-          text: 'Vamos a validar el pago y una vez confirmado, te enviaremos al mail las entradas qr'
+          text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
         })
       } else {
         return Swal.fire({
@@ -225,8 +234,8 @@ export default function ClientUpload({ showCreate, setShowCreate, totalClients, 
                     <Form.Group as={Col} className="info-alias">
                       <Form.Label className="fs-5">Transferir ${totalPrice.toFixed(2)}</Form.Label>
                       <div className="alias">
-                        <Form.Label>Hombres: sbprimera.hom</Form.Label>
-                        <Form.Label>Mujeres: sbprimera.muj</Form.Label>
+                        <Form.Label>Hombres: {event.aliasHom}</Form.Label>
+                        <Form.Label>Mujeres: {event.aliasMuj}</Form.Label>
                       </div>
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">

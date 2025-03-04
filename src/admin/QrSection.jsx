@@ -73,17 +73,6 @@ export default function QrSection() {
   return (
     <div className="qr-reader">
       <video ref={videoEl} className="video-box"></video>
-      <div ref={qrBoxEl} className="qr-box">
-        {!videoEl?.current && (
-          <img
-            src="/static/images/icons/scan_qr1.svg"
-            alt="Qr Frame"
-            width={256}
-            height={256}
-            className="qr-frame"
-          />
-        )}
-      </div>
 
       {/* Show a very noticeable alert when a validation response is available */}
       {validationResponse && (

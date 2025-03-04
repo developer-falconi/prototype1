@@ -1,9 +1,83 @@
-import { Table, Button } from "react-bootstrap";
-import { FaSquareCheck } from "react-icons/fa6";
+import React, { useState } from "react";
+import { Table, Button, Form, Spinner } from "react-bootstrap";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 
-export default function EntradasTable({ clients, onCreateQr }) {
+const VOUCHER_HEADER_COLOR = "#e6f7ff";
+
+export default function EntradasTable({ clients, onCreateQr, onRegenerateQr, loadingCreate, loadingRegenerate }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterUsed, setFilterUsed] = useState(false);
+  const [filterSent, setFilterSent] = useState(false);
+  const [collapsedVouchers, setCollapsedVouchers] = useState({});
+
+  if (!clients || clients.length === 0) {
+    return (
+      <div className="entradas-table no-entradas">
+        <p>No hay entradas</p>
+      </div>
+    );
+  }
+
+  // 1. Filter each voucher’s clients based on the search and checkboxes
+  const filteredVouchers = clients
+    .map((voucher) => {
+      // Filter the clients array for this voucher
+      const filteredClients = voucher.clients.filter((client) => {
+        const query = searchQuery.toLowerCase();
+        const fullNameMatch = client.fullName?.toLowerCase().includes(query);
+        const dniMatch = client.dni?.toLowerCase().includes(query);
+        const emailMatch = voucher.email?.toLowerCase().includes(query);
+        const searchMatch =
+          !searchQuery || fullNameMatch || dniMatch || emailMatch;
+
+        const usedMatch = !filterUsed || (client.ticket && client.ticket.used);
+        const sentMatch = !filterSent || (client.ticket && client.ticket.sent);
+
+        return searchMatch && usedMatch && sentMatch;
+      });
+
+      // Return a new voucher object with filtered clients
+      return { ...voucher, clients: filteredClients };
+    })
+    // 2. Keep only vouchers that have at least one matching client
+    .filter((voucher) => voucher.clients.length > 0);
+
+  // Toggle collapsed state for a voucher
+  const toggleVoucher = (voucherId) => {
+    setCollapsedVouchers((prev) => ({
+      ...prev,
+      [voucherId]: !prev[voucherId],
+    }));
+  };
+
   return (
     <div className="entradas-table">
+      {/* Toolbar */}
+      <div className="toolbar d-flex align-items-center gap-3 mb-3">
+        <Form.Control
+          className="input-toolbar"
+          type="text"
+          placeholder="Buscar por nombre, DNI o email"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <div className="d-flex gap-2 filters">
+          <Form.Check
+            type="checkbox"
+            label="Usados"
+            checked={filterUsed}
+            onChange={(e) => setFilterUsed(e.target.checked)}
+          />
+          <Form.Check
+            type="checkbox"
+            label="Enviados"
+            checked={filterSent}
+            onChange={(e) => setFilterSent(e.target.checked)}
+          />
+        </div>
+      </div>
+
+      {/* Table */}
       <Table striped hover responsive className="clients-table">
         <thead>
           <tr>
@@ -11,50 +85,89 @@ export default function EntradasTable({ clients, onCreateQr }) {
             <th>DNI</th>
             <th>Email</th>
             <th>QR</th>
+            <th>Enviado</th>
             <th>Ticket</th>
             <th>Comprobante</th>
           </tr>
         </thead>
         <tbody>
-          {clients.map((voucher, voucherIndex) =>
-            voucher.clients.map((client, clientIndex) => (
-              <tr key={`${voucherIndex}-${clientIndex}`}>
-                <td>{client.fullName}</td>
-                <td>{client.dni}</td>
-                <td>{voucher.email}</td>
-                <td>
-                  {client.ticket ? (
-                    <img
-                      src={client.ticket.url}
-                      alt="QR Code"
-                      style={{ width: "60px", borderRadius: "4px" }}
-                    />
+          {filteredVouchers.map((voucher) => (
+            // Group each voucher in a fragment.
+            <React.Fragment key={voucher._id}>
+              {/* Voucher Header Row */}
+              <tr
+                className="voucher-row"
+                style={{ backgroundColor: VOUCHER_HEADER_COLOR, cursor: 'pointer' }}
+                onClick={() => toggleVoucher(voucher._id)}
+              >
+                <td colSpan={6}>
+                  {/* Toggle Icon */}
+                  {collapsedVouchers[voucher._id] ? (
+                    <FaChevronRight style={{ marginRight: "0.5rem" }} />
                   ) : (
-                    "No QR Code"
+                    <FaChevronDown style={{ marginRight: "0.5rem" }} />
                   )}
-                </td>
-                <td>
-                  {client.ticket ? (
-                    <FaSquareCheck
-                      style={{ color: "#28a745", fontSize: "1.2rem" }}
-                    />
-                  ) : (
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => onCreateQr(voucher)}
-                    >
-                      Crear
-                    </Button>
-                  )}
-                </td>
-                <td>
-                  <a href={voucher.url} target="_blank" rel="noopener noreferrer">
-                    Ver Comprobante
-                  </a>
+                  <strong>Voucher:</strong> {voucher._id} &nbsp;|&nbsp;
+                  <strong>Email:</strong> {voucher.email}
                 </td>
               </tr>
-            ))
-          )}
+              {/* Only show the voucher's clients if not collapsed */}
+              {!collapsedVouchers[voucher._id] &&
+                voucher.clients.map((client, clientIndex) => (
+                  <tr key={`${voucher._id}-${clientIndex}`}>
+                    <td>{client.fullName}</td>
+                    <td>{client.dni}</td>
+                    <td>{voucher.email}</td>
+                    <td>
+                      {client?.ticket?.url ? (
+                        <img
+                          src={client.ticket.url}
+                          alt="QR Code"
+                          style={{ width: "60px", borderRadius: "4px" }}
+                        />
+                      ) : (
+                        "No QR Code"
+                      )}
+                    </td>
+                    <td>{voucher.sent ? "SI" : "NO"}</td>
+                    <td>
+                      {client.ticket ? (
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => onRegenerateQr(voucher)}
+                        >
+                          {loadingRegenerate ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            "Regenerar"
+                          )}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline-primary"
+                          onClick={() => onCreateQr(voucher)}
+                        >
+                          {loadingCreate ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            "Crear"
+                          )}
+                        </Button>
+                      )}
+                    </td>
+                    <td>
+                      <a
+                        href={voucher.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver Comprobante
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+            </React.Fragment>
+          ))}
         </tbody>
       </Table>
     </div>

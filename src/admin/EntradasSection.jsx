@@ -3,6 +3,7 @@ import { Form, Spinner } from "react-bootstrap";
 import { GET_TICKETS, CREATE_QR, GET_PREVENTS } from "../service/ticket.requests";
 import EntradasTable from "./EntradasTable";
 import "./entradas.scss";
+import Swal from "sweetalert2";
 
 export default function EntradasSection() {
   const [clients, setClients] = useState([]);
@@ -12,6 +13,8 @@ export default function EntradasSection() {
   // Separate loading states for prevents and tickets
   const [loadingPrevents, setLoadingPrevents] = useState(false);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingRegenerate, setLoadingRegenerate] = useState(false);
 
   // Fetch all prevents
   const getPrevents = useCallback(async () => {
@@ -45,6 +48,37 @@ export default function EntradasSection() {
 
   // Generate a QR code for clients who don't have one
   const handleCreateQr = async (voucher) => {
+    setLoadingCreate(true);
+    const createTicketsData = {
+      clients: voucher.clients,
+      email: voucher.email,
+      voucherId: voucher._id
+    };
+    try {
+      const clientsUpdated = await CREATE_QR(createTicketsData);
+      if(clientsUpdated) {
+        const updatedVouchers = clients.map((prevCli) =>
+          prevCli._id === voucher._id
+            ? { ...prevCli, clients: clientsUpdated }
+            : prevCli
+        );
+        setClients(updatedVouchers);
+      } else {
+        Swal.fire({
+          title: "Error al crear QR",
+          text: "Ha ocurrido un error al crear el QR. Inténtelo de nuevo más tarde.",
+          icon: "error",
+          timer: 2000
+        })
+      }
+    } catch (error) {
+      console.error("Error creating QR:", error);
+    }
+    setLoadingCreate(false);
+  };
+
+  const handleRegenerateQr = async (voucher) => {
+    setLoadingRegenerate(true);
     const createTicketsData = {
       clients: voucher.clients,
       email: voucher.email,
@@ -61,6 +95,7 @@ export default function EntradasSection() {
     } catch (error) {
       console.error("Error creating QR:", error);
     }
+    setLoadingRegenerate(false);
   };
 
   useEffect(() => {
@@ -112,7 +147,13 @@ export default function EntradasSection() {
             <span className="loader-text">Cargando entradas...</span>
           </div>
         ) : (
-          <EntradasTable clients={clients} onCreateQr={handleCreateQr} />
+          <EntradasTable
+            clients={clients}
+            onCreateQr={handleCreateQr}
+            onRegenerateQr={handleRegenerateQr}
+            loadingCreate={loadingCreate}
+            loadingRegenerate={loadingRegenerate}
+          />
         )}
       </div>
     </div>

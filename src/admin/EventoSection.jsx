@@ -62,6 +62,8 @@ export default function EventoSection() {
     bar: event.bar || "",
     venue: event.venue || "",
     contact: event.contact || "",
+    aliasHom: event.aliasHom || "",
+    aliasMuj: event.aliasMuj || "",
     phoneRest: phoneRest ?? "",
   };
 
@@ -95,10 +97,11 @@ export default function EventoSection() {
             bar: eventEdited.bar || "",
             venue: eventEdited.venue || "",
             contact: eventEdited.contact || "",
-            phoneRest:
-              eventEdited.phone && eventEdited.phone.startsWith("+54911")
-                ? eventEdited.phone.slice(6)
-                : eventEdited.phone || "",
+            aliasHom: eventEdited.aliasHom || "",
+            aliasMuj: eventEdited.aliasMuj || "",
+            phoneRest: eventEdited.phone && eventEdited.phone.startsWith("+54911")
+              ? eventEdited.phone.slice(6)
+              : eventEdited.phone || "",
           },
         });
       }
@@ -143,10 +146,17 @@ export default function EventoSection() {
               <label htmlFor="contact">Contacto:</label>
               <Field type="text" name="contact" id="contact" className="form-control" />
             </div>
-            {/* Display prefix and let user type rest of the number */}
             <div className="form-group">
               <label>Teléfono: +54911</label>
               <Field type="text" name="phoneRest" id="phoneRest" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="aliasHom">Alias Hombres:</label>
+              <Field type="text" name="aliasHom" id="aliasHom" className="form-control" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="aliasMuj">Alias Mujeres:</label>
+              <Field type="text" name="aliasMuj" id="aliasMuj" className="form-control" />
             </div>
             <div className="form-group submit-group">
               <Button

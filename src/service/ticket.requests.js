@@ -66,6 +66,15 @@ export const CREATE_QR = async (ticketsData) => {
   }
 }
 
+export const REGENERATE_QR = async (ticketsData) => {
+  try {
+    const res = await request(Methods.POST, `${VANELLUS_BE}/qr/createQr`, null, ticketsData)
+    return res?.data
+  } catch (error) {
+    return errorHandler(error)
+  }
+}
+
 export const GET_PREVENTS = async () => {
   try {
     const res = await request(Methods.GET, `${VANELLUS_BE}/prevent/getPrevents`, null, null)

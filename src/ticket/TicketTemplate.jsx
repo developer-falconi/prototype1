@@ -92,6 +92,7 @@ export default function TicketTemplate({ prevent, activeEvent }) {
         totalPrice={total}
         setTotalPrice={setTotal}
         prevent={prevent}
+        event={activeEvent}
       />
     </main>
   );
