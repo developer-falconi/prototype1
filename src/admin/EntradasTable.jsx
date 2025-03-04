@@ -132,7 +132,7 @@ export default function EntradasTable({
                           "No QR Code"
                         )}
                       </td>
-                      <td>{client.ticket.sent ? "SI" : "NO"}</td>
+                      <td>{client.ticket?.sent ? "SI" : "NO"}</td>
                       <td>
                         {client.ticket ? (
                           <Button
