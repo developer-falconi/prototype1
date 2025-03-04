@@ -116,8 +116,6 @@ export default function EntradasTable({
               {/* Only show the voucher's clients if not collapsed */}
               {!collapsedVouchers[voucher._id] &&
                 voucher.clients.map((client, clientIndex) => {
-                  // Get loading state for this specific client.
-                  const clientLoadingState = loadingRows[client._id] || null;
                   return (
                     <tr key={`${voucher._id}-${clientIndex}`}>
                       <td>{client.fullName}</td>
@@ -134,14 +132,14 @@ export default function EntradasTable({
                           "No QR Code"
                         )}
                       </td>
-                      <td>{voucher.sent ? "SI" : "NO"}</td>
+                      <td>{client.ticket.sent ? "SI" : "NO"}</td>
                       <td>
                         {client.ticket ? (
                           <Button
                             variant="outline-primary"
-                            onClick={() => onRegenerateQr(voucher, client)}
+                            onClick={() => onRegenerateQr(voucher)}
                           >
-                            {clientLoadingState === "regenerate" ? (
+                            {loadingRows[voucher._id] === "regenerate" ? (
                               <Spinner animation="border" size="sm" />
                             ) : (
                               "Regenerar"

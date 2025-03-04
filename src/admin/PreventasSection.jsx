@@ -3,6 +3,7 @@ import { Table, Button, Spinner } from "react-bootstrap";
 import { Formik, Field } from "formik";
 import { GET_PREVENTS, EDIT_PREVENT_DATA } from "../service/ticket.requests";
 import "./preventas.scss";
+import { formatPrice } from "../helpers/constants";
 
 function PreventRow({ item, onUpdate }) {
   const [editing, setEditing] = useState(false);
@@ -64,6 +65,7 @@ function PreventRow({ item, onUpdate }) {
               </label>
             </td>
             <td>{item.totalClients}</td>
+            <td>{item.totalPrice}</td>
             <td>
               <div className="edit-buttons">
                 <Button
@@ -113,6 +115,7 @@ function PreventRow({ item, onUpdate }) {
           </label>
         </td>
         <td>{item.totalClients}</td>
+        <td>{formatPrice(item.totalPrice)}</td>
         <td>
           <Button
             variant="outline-primary"
@@ -175,7 +178,8 @@ export default function PreventasSection() {
             <th>Nombre</th>
             <th>Precio</th>
             <th>Activa</th>
-            <th>Clientes Totales</th>
+            <th>Clientes</th>
+            <th>Importe</th>
             <th>Acciones</th>
           </tr>
         </thead>

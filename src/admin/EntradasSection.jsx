@@ -125,21 +125,22 @@ export default function EntradasSection() {
   };
 
   // Regenerate a QR code
-  const handleRegenerateQr = async (voucher, client) => {
-    setLoadingRows((prev) => ({ ...prev, [client._id]: "regenerate" }));
+  const handleRegenerateQr = async (voucher) => {
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: "regenerate" }));
+
+    const createTicketsData = {
+      clients: voucher.clients,
+      email: voucher.email,
+      voucherId: voucher._id,
+    };
 
     try {
-      const updatedClient = await REGENERATE_QR(client);
-      if (updatedClient) {
-        const updatedVouchers = clients.map((prevVoucher) =>
-          prevVoucher._id === voucher._id
-            ? {
-              ...prevVoucher,
-              clients: prevVoucher.clients.map((prevClient) =>
-                prevClient._id === client._id ? updatedClient : prevClient
-              ),
-            }
-            : prevVoucher
+      const clientsUpdated = await REGENERATE_QR(createTicketsData);
+      if (clientsUpdated) {
+        const updatedVouchers = clients.map((prevCli) =>
+          prevCli._id === voucher._id
+            ? { ...prevCli, clients: clientsUpdated }
+            : prevCli
         );
         setClients(updatedVouchers);
       } else {
@@ -155,7 +156,7 @@ export default function EntradasSection() {
     }
 
     // Unset loading for this client.
-    setLoadingRows((prev) => ({ ...prev, [client._id]: null }));
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: null }));
   };
 
   return (
