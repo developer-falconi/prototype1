@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Form, Spinner } from "react-bootstrap";
-import { GET_TICKETS, CREATE_QR, GET_PREVENTS } from "../service/ticket.requests";
+import { GET_TICKETS, CREATE_QR, GET_PREVENTS, REGENERATE_QR } from "../service/ticket.requests";
 import EntradasTable from "./EntradasTable";
 import "./entradas.scss";
 import Swal from "sweetalert2";
@@ -10,11 +10,12 @@ export default function EntradasSection() {
   const [prevents, setPrevents] = useState([]);
   const [activePrevent, setActivePrevent] = useState(null);
 
-  // Separate loading states for prevents and tickets
+  // Loading states
   const [loadingPrevents, setLoadingPrevents] = useState(false);
   const [loadingTickets, setLoadingTickets] = useState(false);
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingRegenerate, setLoadingRegenerate] = useState(false);
+
+  // Per-row loading map: { [voucherId]: "create" | "regenerate" | null }
+  const [loadingRows, setLoadingRows] = useState({});
 
   // Fetch all prevents
   const getPrevents = useCallback(async () => {
@@ -46,58 +47,6 @@ export default function EntradasSection() {
     }
   }, []);
 
-  // Generate a QR code for clients who don't have one
-  const handleCreateQr = async (voucher) => {
-    setLoadingCreate(true);
-    const createTicketsData = {
-      clients: voucher.clients,
-      email: voucher.email,
-      voucherId: voucher._id
-    };
-    try {
-      const clientsUpdated = await CREATE_QR(createTicketsData);
-      if(clientsUpdated) {
-        const updatedVouchers = clients.map((prevCli) =>
-          prevCli._id === voucher._id
-            ? { ...prevCli, clients: clientsUpdated }
-            : prevCli
-        );
-        setClients(updatedVouchers);
-      } else {
-        Swal.fire({
-          title: "Error al crear QR",
-          text: "Ha ocurrido un error al crear el QR. Inténtelo de nuevo más tarde.",
-          icon: "error",
-          timer: 2000
-        })
-      }
-    } catch (error) {
-      console.error("Error creating QR:", error);
-    }
-    setLoadingCreate(false);
-  };
-
-  const handleRegenerateQr = async (voucher) => {
-    setLoadingRegenerate(true);
-    const createTicketsData = {
-      clients: voucher.clients,
-      email: voucher.email,
-      voucherId: voucher._id
-    };
-    try {
-      const clientsUpdated = await CREATE_QR(createTicketsData);
-      const updatedVouchers = clients.map((prevCli) =>
-        prevCli._id === voucher._id
-          ? { ...prevCli, clients: clientsUpdated }
-          : prevCli
-      );
-      setClients(updatedVouchers);
-    } catch (error) {
-      console.error("Error creating QR:", error);
-    }
-    setLoadingRegenerate(false);
-  };
-
   useEffect(() => {
     getPrevents();
   }, [getPrevents]);
@@ -117,6 +66,78 @@ export default function EntradasSection() {
       </div>
     );
   }
+
+  // Generate a QR code for clients who don't have one
+  const handleCreateQr = async (voucher) => {
+    // Mark this voucher row as "creating"
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: "create" }));
+
+    const createTicketsData = {
+      clients: voucher.clients,
+      email: voucher.email,
+      voucherId: voucher._id,
+    };
+
+    try {
+      const clientsUpdated = await CREATE_QR(createTicketsData);
+      if (clientsUpdated) {
+        const updatedVouchers = clients.map((prevCli) =>
+          prevCli._id === voucher._id
+            ? { ...prevCli, clients: clientsUpdated }
+            : prevCli
+        );
+        setClients(updatedVouchers);
+      } else {
+        Swal.fire({
+          title: "Error al crear QR",
+          text: "Ha ocurrido un error al crear el QR. Inténtelo de nuevo más tarde.",
+          icon: "error",
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating QR:", error);
+    }
+
+    // Unset loading
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: null }));
+  };
+
+  // Regenerate a QR code
+  const handleRegenerateQr = async (voucher) => {
+    // Mark this voucher row as "regenerating"
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: "regenerate" }));
+
+    const createTicketsData = {
+      clients: voucher.clients,
+      email: voucher.email,
+      voucherId: voucher._id,
+    };
+
+    try {
+      const clientsUpdated = await REGENERATE_QR(createTicketsData);
+      if (clientsUpdated) {
+        const updatedVouchers = clients.map((prevCli) =>
+          prevCli._id === voucher._id
+            ? { ...prevCli, clients: clientsUpdated }
+            : prevCli
+        );
+        setClients(updatedVouchers);
+      } else {
+        Swal.fire({
+          title: "Error al regenerar QR",
+          text: "Ha ocurrido un error al regenerar el QR. Inténtelo de nuevo más tarde.",
+          icon: "error",
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating QR:", error);
+    }
+
+    // Unset loading
+    setLoadingRows((prev) => ({ ...prev, [voucher._id]: null }));
+  };
 
   return (
     <div className="entradas-full">
@@ -151,8 +172,7 @@ export default function EntradasSection() {
             clients={clients}
             onCreateQr={handleCreateQr}
             onRegenerateQr={handleRegenerateQr}
-            loadingCreate={loadingCreate}
-            loadingRegenerate={loadingRegenerate}
+            loadingRows={loadingRows}  // pass the per-row loading map
           />
         )}
       </div>

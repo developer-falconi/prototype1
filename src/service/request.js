@@ -1,25 +1,29 @@
 import axios from "axios";
-export const request = async (method, url, params, data) => {
 
-  let token = localStorage.getItem('token')
+export const request = async (method, url, params, data) => {
+  let token = localStorage.getItem('token');
 
   const config = {
-    method: method,
-    url: url,
-    params: params,
-    data: data,
+    method,
+    url,
+    params,
+    data,
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  }
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  };
 
   try {
     const response = await axios(config);
     return response;
   } catch (error) {
-    console.log(error)
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.reload();
+    }
+    console.error(error);
     return error;
   }
-}
+};
