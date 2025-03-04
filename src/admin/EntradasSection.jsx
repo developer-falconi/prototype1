@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Form, Spinner } from "react-bootstrap";
-import { GET_TICKETS, CREATE_QR, GET_PREVENTS, REGENERATE_QR } from "../service/ticket.requests";
+import { Button, Form, Spinner } from "react-bootstrap";
+import { GET_TICKETS, CREATE_QR, GET_PREVENTS, REGENERATE_QR, DOWNLOAD_TICKETS_PREVENTA } from "../service/ticket.requests";
 import EntradasTable from "./EntradasTable";
 import "./entradas.scss";
 import Swal from "sweetalert2";
@@ -13,6 +13,7 @@ export default function EntradasSection() {
   // Loading states
   const [loadingPrevents, setLoadingPrevents] = useState(false);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [loadingDownload, setLoadingDownload] = useState(false);
 
   // Per-row loading map: { [voucherId]: "create" | "regenerate" | null }
   const [loadingRows, setLoadingRows] = useState({});
@@ -66,6 +67,26 @@ export default function EntradasSection() {
       </div>
     );
   }
+
+  const handleDownloadEntradasPreventa = async () => {
+    setLoadingDownload(true);
+    try {
+      const response = await DOWNLOAD_TICKETS_PREVENTA(activePrevent);
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+      const prevent = prevents.find(p => p?.prevent?._id === activePrevent);
+      const preventName = prevent?.prevent?.name?.replace(/\s+/g, "_");
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `entradas_${preventName}.xlsx`;
+      link.click();
+    } catch (error) {
+      console.error("Error downloading Excel file:", error);
+    } finally {
+      setLoadingDownload(false);
+    }
+  };
 
   // Generate a QR code for clients who don't have one
   const handleCreateQr = async (voucher) => {
@@ -140,23 +161,35 @@ export default function EntradasSection() {
   return (
     <div className="entradas-full">
       <h2 className="entradas-title">Entradas</h2>
-      <div className="entradas-controls">
-        <label htmlFor="preventSelect" className="entradas-label">
-          Preventa:
-        </label>
-        <Form.Control
-          as="select"
-          id="preventSelect"
-          value={activePrevent || ""}
-          onChange={(e) => setActivePrevent(e.target.value)}
-          className="entradas-select"
+      <div className="toolbar-entradas">
+        <div className="entradas-controls">
+          <label htmlFor="preventSelect" className="entradas-label">
+            Preventa:
+          </label>
+          <Form.Control
+            as="select"
+            id="preventSelect"
+            value={activePrevent || ""}
+            onChange={(e) => setActivePrevent(e.target.value)}
+            className="entradas-select"
+          >
+            {prevents.map((item) => (
+              <option key={item.prevent._id} value={item.prevent._id}>
+                {item.prevent.name}
+              </option>
+            ))}
+          </Form.Control>
+        </div>
+        <Button
+          variant="outline-primary"
+          onClick={() => handleDownloadEntradasPreventa()}
         >
-          {prevents.map((item) => (
-            <option key={item.prevent._id} value={item.prevent._id}>
-              {item.prevent.name}
-            </option>
-          ))}
-        </Form.Control>
+          {loadingDownload ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            "Descargar entradas enviadas"
+          )}
+        </Button>
       </div>
 
       <div className="entradas-table-wrapper">

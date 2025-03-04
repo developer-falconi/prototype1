@@ -66,6 +66,21 @@ export const CREATE_QR = async (ticketsData) => {
   }
 }
 
+export const DOWNLOAD_TICKETS_PREVENTA = async (preventId) => {
+  try {
+    const res = await axios.get(`${VANELLUS_BE}/ticket/download?prevent=${preventId}`, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      responseType: 'arraybuffer',
+    });
+    return res;
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
 export const REGENERATE_QR = async (ticketsData) => {
   try {
     const res = await request(Methods.POST, `${VANELLUS_BE}/qr/regenerateQr`, null, ticketsData)

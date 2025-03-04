@@ -10,9 +10,7 @@ export default function errorHandler(error) {
       timerProgressBar: true,
       showConfirmButton: false
     }).then(() => {
-      if (process.env.REACT_APP_ERROR_HANDLERS === 'true') {
-        window.location.href = '/'
-      }
+      window.location.reload();
     })
   } else {
     Swal.fire({
