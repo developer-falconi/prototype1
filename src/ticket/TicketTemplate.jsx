@@ -68,20 +68,28 @@ export default function TicketTemplate({ prevent, activeEvent }) {
           </div>
         </div>
         <div className="ticket-footer">
-          <h3>{prevent?.name} | {formatPrice(prevent?.price)}</h3>
-          <div className="quantity-controls">
-            <button className="minus-btn" onClick={handleMinusQtity}>-</button>
-            <span>{qtity}</span>
-            <button className="plus-btn" onClick={handlePlusQtity}>+</button>
-          </div>
-          <p>Total: {formatPrice(total)}</p>
-          <button
-            className="purchase-btn"
-            onClick={handleUploadClients}
-            disabled={!prevent.active || qtity === 0}
-          >
-            Comprar
-          </button>
+          {
+            prevent.active ? (
+              <>
+                <h3>{prevent?.name} | {formatPrice(prevent?.price)}</h3>
+                <div className="quantity-controls">
+                  <button className="minus-btn" onClick={handleMinusQtity}>-</button>
+                  <span>{qtity}</span>
+                  <button className="plus-btn" onClick={handlePlusQtity}>+</button>
+                </div>
+                <p>Total: {formatPrice(total)}</p>
+                <button
+                  className="purchase-btn"
+                  onClick={handleUploadClients}
+                  disabled={!prevent.active || qtity === 0}
+                >
+                  Comprar
+                </button>
+              </>
+            ) : (
+              <h3 className='sold-out'>Sold Out</h3>
+            )
+          }
         </div>
       </div>
       <ClientUpload
