@@ -41,7 +41,7 @@ export default function TicketMain() {
               <h2 className="info-help">
                 Por cualquier problema comunicarse con{" "}
                 <a
-                  href={`https://wa.me/${activeEvent.phone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
+                  href={`https://wa.me/${activeEvent?.phone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
                   rel="noreferrer"
                   target="_blank"
                 >

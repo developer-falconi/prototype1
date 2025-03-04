@@ -70,6 +70,15 @@ export default function QrSection() {
     }
   }, [validationResponse]);
 
+  useEffect(() => {
+    if (validationResponse) {
+      const timer = setTimeout(() => {
+        setValidationResponse(null);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [validationResponse]);
+
   return (
     <div className="qr-reader">
       <video ref={videoEl} className="video-box"></video>
