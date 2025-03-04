@@ -68,7 +68,7 @@ export default function QrSection() {
         console.error("Error playing audio:", err);
       });
     }
-  }, [validationResponse]);  
+  }, [validationResponse]);
 
   return (
     <div className="qr-reader">
@@ -76,7 +76,7 @@ export default function QrSection() {
 
       {/* Show a very noticeable alert when a validation response is available */}
       {validationResponse && (
-        <Alert variant={validationResponse.success ? "success" : "danger"} className="alert-message">
+        <Alert variant={validationResponse.success ? "success" : "danger"} className="alert-message big-alert">
           {validationResponse.message}
         </Alert>
       )}

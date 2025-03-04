@@ -83,15 +83,16 @@ export default function ClientUpload({
       setFieldValue('comprobante', '');
       setFieldValue('email', '');
       setFileUrl('');
-      if (res?._id) {
+      if (res?.success) {
         return Swal.fire({
           title: 'Compra realizada con éxito',
           icon: 'success',
           text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
         })
       } else {
+        const message = res?.message && res?.message?.length > 0 ? res?.message : 'Ocurrió un error, intenta devuelta';
         return Swal.fire({
-          title: 'Ocurrió un error, intenta devuelta',
+          title: message,
           icon: 'error'
         })
       }
