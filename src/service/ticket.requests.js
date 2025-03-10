@@ -90,6 +90,15 @@ export const REGENERATE_QR = async (ticketsData) => {
   }
 }
 
+export const DELETE_CLIENT = async (voucherId, clientId) => {
+  try {
+    const res = await request(Methods.DELETE, `${VANELLUS_BE}/ticket?voucher=${voucherId}&client=${clientId}`, null, null)
+    return res?.data
+  } catch (error) {
+    return errorHandler(error)
+  }
+}
+
 export const GET_PREVENTS = async () => {
   try {
     const res = await request(Methods.GET, `${VANELLUS_BE}/prevent/getPrevents`, null, null)

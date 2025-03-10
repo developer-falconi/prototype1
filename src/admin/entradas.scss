@@ -13,6 +13,7 @@
   margin: 0;
   text-align: left;
 }
+
 .toolbar-entradas {
   display: flex;
   align-items: center;
@@ -128,6 +129,10 @@
   text-align: left;
 }
 
+.align-middle {
+  text-align: center !important;
+}
+
 /* --- Mobile "Stacked" Table --- */
 @media screen and (max-width: 576px) {
   .filters {
@@ -197,6 +202,14 @@
 
   .clients-table tbody td:nth-of-type(7)::before {
     content: "Comprobante:";
+  }
+
+  .clients-table tbody td:nth-of-type(8)::before {
+    content: "Eliminar:";
+  }
+
+  .align-middle {
+    text-align: left !important;
   }
 
   .voucher-row {

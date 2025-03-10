@@ -65,6 +65,8 @@ function PreventRow({ item, onUpdate }) {
               </label>
             </td>
             <td>{item.totalClients}</td>
+            <td>{item.totalHombre}</td>
+            <td>{item.totalMujer}</td>
             <td>{item.totalPrice}</td>
             <td>
               <div className="edit-buttons">
@@ -115,6 +117,8 @@ function PreventRow({ item, onUpdate }) {
           </label>
         </td>
         <td>{item.totalClients}</td>
+        <td>{item.totalHombre}</td>
+        <td>{item.totalMujer}</td>
         <td>{formatPrice(item.totalPrice)}</td>
         <td>
           <Button
@@ -179,6 +183,8 @@ export default function PreventasSection() {
             <th>Precio</th>
             <th>Activa</th>
             <th>Clientes</th>
+            <th>Hombres</th>
+            <th>Mujeres</th>
             <th>Importe</th>
             <th>Acciones</th>
           </tr>

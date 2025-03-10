@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Table, Button, Form, Spinner } from "react-bootstrap";
-import { FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaTrash } from "react-icons/fa";
 
 const VOUCHER_HEADER_COLOR = "#e6f7ff";
 
@@ -8,7 +8,8 @@ export default function EntradasTable({
   clients,
   onCreateQr,
   onRegenerateQr,
-  loadingRows
+  loadingRows,
+  deleteClient
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterUsed, setFilterUsed] = useState(false);
@@ -88,6 +89,7 @@ export default function EntradasTable({
             <th>Enviado</th>
             <th>Ticket</th>
             <th>Comprobante</th>
+            <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
@@ -166,6 +168,15 @@ export default function EntradasTable({
                         >
                           Ver Comprobante
                         </a>
+                      </td>
+                      <td className="align-middle">
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => deleteClient(voucher._id, client._id)}
+                        >
+                          <FaTrash />
+                        </Button>
                       </td>
                     </tr>
                   );

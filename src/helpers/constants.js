@@ -1,7 +1,8 @@
 export const Methods = {
   GET: 'GET',
   POST: 'POST',
-  PUT: 'PUT'
+  PUT: 'PUT',
+  DELETE: 'DELETE',
 }
 
 export const tickets = []

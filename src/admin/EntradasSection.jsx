@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
-import { GET_TICKETS, CREATE_QR, GET_PREVENTS, REGENERATE_QR, DOWNLOAD_TICKETS_PREVENTA } from "../service/ticket.requests";
+import { GET_TICKETS, CREATE_QR, GET_PREVENTS, REGENERATE_QR, DOWNLOAD_TICKETS_PREVENTA, DELETE_CLIENT } from "../service/ticket.requests";
 import EntradasTable from "./EntradasTable";
 import "./entradas.scss";
 import Swal from "sweetalert2";
@@ -159,6 +159,41 @@ export default function EntradasSection() {
     setLoadingRows((prev) => ({ ...prev, [voucher._id]: null }));
   };
 
+  const deleteClient = async (voucherId, clientId) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro que deseas eliminar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const res = await DELETE_CLIENT(voucherId, clientId);
+    if (res.success) {
+      if (res.data) {
+        const updatedVoucher = res.data;
+        setClients((prevClients) =>
+          prevClients.map((voucher) =>
+            voucher._id === updatedVoucher._id ? updatedVoucher : voucher
+          )
+        );
+      } else {
+        setClients((prevClients) =>
+          prevClients.filter((voucher) => voucher._id !== voucherId)
+        );
+      }
+
+      Swal.fire({
+        title: 'Eliminado correctamente!',
+        icon: 'success'
+      });
+    };
+  }
+
   return (
     <div className="entradas-full">
       <h2 className="entradas-title">Entradas</h2>
@@ -204,7 +239,8 @@ export default function EntradasSection() {
             clients={clients}
             onCreateQr={handleCreateQr}
             onRegenerateQr={handleRegenerateQr}
-            loadingRows={loadingRows}  // pass the per-row loading map
+            loadingRows={loadingRows}
+            deleteClient={deleteClient}
           />
         )}
       </div>
