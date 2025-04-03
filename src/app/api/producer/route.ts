@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
     const producer = await response.json() as {
       success: boolean;
-      data: any
+      data: object;
     };
 
     if (producer.success) {

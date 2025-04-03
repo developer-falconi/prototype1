@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Event {
@@ -46,7 +45,7 @@ export default function Home() {
         if (res.success && res.data) {
           setProducer(res.data);
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching producer:", err);
       } finally {
         setIsLoading(false);
