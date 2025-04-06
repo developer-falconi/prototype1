@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.scss';
 import TicketMain from './ticket/TicketMain';
-
 function App() {
   return (
     <div className="App">
