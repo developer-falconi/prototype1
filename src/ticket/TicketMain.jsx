@@ -1,58 +1,60 @@
 import { useEffect, useState } from "react";
-import './ticket.scss';
-import { GET_ACTIVE_PREVENT, GET_EVENT_DATA } from "../service/ticket.requests";
+import "./ticket.scss";
+import { GET_PRODUCER_DATA } from "../service/ticket.requests";
 import Loader from "../loader/Loader";
 import { AdvancedImage } from "@cloudinary/react";
 import { cloudinaryImg } from "../helpers/cloudinary";
 import TicketTemplate from "./TicketTemplate";
 
-const img = 'FlyerLogo.jpg'
-const img2 = 'FlyerLogo.jpg'
-
 export default function TicketMain() {
-  const [isLoading, setIsLoading] = useState([]);
-  const [prevent, setPrevent] = useState();
-  const [activeEvent, setActiveEvent] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [producerData, setProducerData] = useState(null);
 
   useEffect(() => {
-    Promise.all([GET_ACTIVE_PREVENT(), GET_EVENT_DATA()])
-      .then(([preventRes, eventRes]) => {
-        setPrevent(preventRes);
-        setActiveEvent(eventRes);
+    GET_PRODUCER_DATA()
+      .then((producerRes) => {
+        setProducerData(producerRes.data);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.error('Error loading data:', error);
+        console.error("Error loading data:", error);
         setIsLoading(false);
       });
   }, []);
 
+  // Use phone if available, otherwise fallback to contactEmail for WhatsApp link
+  const contact = producerData?.phone || producerData?.contactEmail || "";
+
   return (
     <div className="content-page">
-      {
-        isLoading ? (
-          <>
-            <Loader />
-          </>
-        ) : (
-          <>
-            <div className="prevent-tickets">
-              <TicketTemplate prevent={prevent} activeEvent={activeEvent} />
-              <h2 className="info-help">
-                Por cualquier problema comunicarse con{" "}
-                <a
-                  href={`https://wa.me/${activeEvent?.phone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {activeEvent.contact}
-                </a>
-              </h2>
-            </div>
-            <AdvancedImage cldImg={cloudinaryImg(window.innerWidth > 521 ? img : img2)} alt='img' className='flyer-img' />
-          </>
-        )
-      }
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="prevent-tickets">
+            <TicketTemplate
+              image={producerData.logo}
+              activeEvent={producerData.events[0]}
+              prevent={producerData.events[0]?.prevents[0]}
+            />
+            <h2 className="info-help">
+              Por cualquier problema comunicarse con{" "}
+              <a
+                href={`https://wa.me/${contact}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {producerData?.contactEmail}
+              </a>
+            </h2>
+          </div>
+          <img
+            src={producerData.logo}
+            alt="img"
+            className="flyer-img"
+          />
+        </>
+      )}
     </div>
   );
 }

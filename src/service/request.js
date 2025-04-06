@@ -2,6 +2,7 @@ import axios from "axios";
 
 export const request = async (method, url, params, data) => {
   let token = localStorage.getItem('token');
+  const origin = window.location.origin;
 
   const config = {
     method,
@@ -12,6 +13,7 @@ export const request = async (method, url, params, data) => {
       Authorization: `Bearer ${token}`,
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Content-Type',
+      Origin: origin,
     },
   };
 
@@ -21,7 +23,7 @@ export const request = async (method, url, params, data) => {
   } catch (error) {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
-      window.location.reload();
+      // window.location.reload();
     }
     console.error(error);
     return error;
