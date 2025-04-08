@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import "./ticket.scss";
 import { GET_PRODUCER_DATA } from "../service/ticket.requests";
 import Loader from "../loader/Loader";
-import { AdvancedImage } from "@cloudinary/react";
-import { cloudinaryImg } from "../helpers/cloudinary";
 import TicketTemplate from "./TicketTemplate";
 
 export default function TicketMain() {
@@ -22,8 +20,12 @@ export default function TicketMain() {
       });
   }, []);
 
-  // Use phone if available, otherwise fallback to contactEmail for WhatsApp link
-  const contact = producerData?.phone || producerData?.contactEmail || "";
+  const contactPhone = producerData?.users?.[0]?.phone;
+  const contactName = producerData?.users?.[0]?.fullName;
+
+  const activeEvent = producerData?.events?.[0];
+
+  const hasActiveEventWithPrevent = Boolean(activeEvent);
 
   return (
     <div className="content-page">
@@ -32,27 +34,31 @@ export default function TicketMain() {
       ) : (
         <>
           <div className="prevent-tickets">
-            <TicketTemplate
-              image={producerData.logo}
-              activeEvent={producerData.events[0]}
-              prevent={producerData.events[0]?.prevents[0]}
-            />
+            {hasActiveEventWithPrevent ? (
+              <TicketTemplate
+                image={producerData.logo}
+                activeEvent={activeEvent}
+                prevent={activeEvent?.prevent?.[0]}
+              />
+            ) : (
+              <div className="create-event-label">
+                <p>
+                  No se encontró un evento activo o preventas. Por favor, crea un evento y asigna las preventas correspondientes.
+                </p>
+              </div>
+            )}
             <h2 className="info-help">
               Por cualquier problema comunicarse con{" "}
               <a
-                href={`https://wa.me/${contact}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
+                href={`https://wa.me/${contactPhone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
                 rel="noreferrer"
                 target="_blank"
               >
-                {producerData?.contactEmail}
+                {contactName}
               </a>
             </h2>
           </div>
-          <img
-            src={producerData.logo}
-            alt="img"
-            className="flyer-img"
-          />
+          <img src={producerData.logo} alt="img" className="flyer-img" />
         </>
       )}
     </div>
