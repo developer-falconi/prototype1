@@ -32,9 +32,3 @@ jobs:
             mv build/* .
             rm -rf build
           fi
-
-      - name: Commit and Push Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Deploy build output to root"
-          push_options: '--force'
