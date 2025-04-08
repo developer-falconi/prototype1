@@ -13,7 +13,7 @@ export const request = async (method, url, params, data) => {
       Authorization: `Bearer ${token}`,
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Content-Type',
-      Origin: origin,
+      // Origin: origin,
     },
   };
 
