@@ -106,7 +106,7 @@ export default function ClientUpload({
     formData.append('comprobante', file);
     // const fileEncoded = new URLSearchParams(formData).toString();
 
-    await UPLOAD_COMPROBANTE(formData).then((res) => {
+    await UPLOAD_COMPROBANTE(formData, event.id).then((res) => {
       if (res.success) {
         setFileUrl(res.fileUrl);
         setFieldValue('comprobante', file)

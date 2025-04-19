@@ -1,12 +1,9 @@
-import { AdvancedImage } from "@cloudinary/react";
-import "./ticket-template.scss";
-import { cloudinaryImg } from "../helpers/cloudinary";
+// TicketTemplate.jsx
 import { useState } from "react";
+import "./ticket-template.scss";
 import ClientUpload from "../client/ClientUpload";
 import { formatPrice, formatToBuenosAires } from "../helpers/constants";
 import { DateTime } from "luxon";
-
-const teroImg = "FlyerLogoCrop_lzzufk.png";
 
 export default function TicketTemplate({ prevent, activeEvent, image }) {
   const [qtity, setQtity] = useState(1);
@@ -17,70 +14,61 @@ export default function TicketTemplate({ prevent, activeEvent, image }) {
 
   const handleMinusQtity = () => {
     if (qtity > 1) {
-      const newQtity = qtity - 1;
-      setQtity(newQtity);
-      setTotal(price * newQtity);
-      setTotalClients(newQtity);
+      const next = qtity - 1;
+      setQtity(next);
+      setTotal(price * next);
+      setTotalClients(next);
     }
   };
 
   const handlePlusQtity = () => {
     if (qtity < 10) {
-      const newQtity = qtity + 1;
-      setQtity(newQtity);
-      setTotal(price * newQtity);
-      setTotalClients(newQtity);
+      const next = qtity + 1;
+      setQtity(next);
+      setTotal(price * next);
+      setTotalClients(next);
     }
-  };
-
-  const handleUploadClients = () => {
-    setShowCreate(true);
   };
 
   return (
     <main className="new-ticket-system">
       <div className="ticket-card">
         <div className="ticket-header">
-          <h2 className="location">
-            {activeEvent?.name || "Evento sin nombre"}
-          </h2>
-          <img
-            // cldImg={cloudinaryImg(teroImg)}
-            src={image}
-            alt="tero"
-            className="logo-img"
-          />
+          <h2 className="location">{activeEvent?.name || "Evento sin nombre"}</h2>
+          <img src={image} alt="Logo" className="logo-img" />
         </div>
+
         <div className="ticket-details">
           <div className="detail">
-            <span>Date:</span>
-            <p>{DateTime.fromISO(activeEvent.startDate).toFormat("dd/MM/yyyy")}</p>
-          </div>
-          <div className="detail">
-            <span>Start:</span>
+            <span>Fecha:</span>
             <p>
               {activeEvent?.startDate
-                ? formatToBuenosAires(activeEvent.startDate).split(' ')[1]
+                ? DateTime.fromISO(activeEvent.startDate).toFormat("dd/MM/yyyy")
                 : "N/A"}
             </p>
           </div>
           <div className="detail">
-            <span>End:</span>
+            <span>Inicia:</span>
+            <p>
+              {activeEvent?.startDate
+                ? formatToBuenosAires(activeEvent.startDate).split(" ")[1]
+                : "N/A"}
+            </p>
+          </div>
+          <div className="detail">
+            <span>Finaliza:</span>
             <p>
               {activeEvent?.endDate
-                ? formatToBuenosAires(activeEvent.endDate).split(' ')[1]
+                ? formatToBuenosAires(activeEvent.endDate).split(" ")[1]
                 : "N/A"}
             </p>
           </div>
           <div className="detail">
-            <span>Bar:</span>
-            <p>N/A</p>
-          </div>
-          <div className="detail">
-            <span>Venue:</span>
+            <span>Ubicación:</span>
             <p>{activeEvent?.location || "N/A"}</p>
           </div>
         </div>
+
         <div className="ticket-footer">
           {prevent && prevent.status === "ACTIVE" ? (
             <>
@@ -88,19 +76,19 @@ export default function TicketTemplate({ prevent, activeEvent, image }) {
                 {prevent.name} | {formatPrice(price)}
               </h3>
               <div className="quantity-controls">
-                <button className="minus-btn" onClick={handleMinusQtity}>
-                  -
+                <button onClick={handleMinusQtity} className="minus-btn">
+                  –
                 </button>
                 <span>{qtity}</span>
-                <button className="plus-btn" onClick={handlePlusQtity}>
+                <button onClick={handlePlusQtity} className="plus-btn">
                   +
                 </button>
               </div>
               <p>Total: {formatPrice(total)}</p>
               <button
                 className="purchase-btn"
-                onClick={handleUploadClients}
-                disabled={prevent.status !== "ACTIVE" || qtity === 0}
+                onClick={() => setShowCreate(true)}
+                disabled={qtity < 1}
               >
                 Comprar
               </button>
@@ -110,6 +98,7 @@ export default function TicketTemplate({ prevent, activeEvent, image }) {
           )}
         </div>
       </div>
+
       <ClientUpload
         showCreate={showCreate}
         setShowCreate={setShowCreate}

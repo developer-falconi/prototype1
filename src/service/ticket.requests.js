@@ -14,11 +14,11 @@ export const CREATE_TICKET = async (clientData) => {
   }
 }
 
-export const UPLOAD_COMPROBANTE = async (comprobante) => {
+export const UPLOAD_COMPROBANTE = async (comprobante, eventId) => {
   try {
     const config = {
       method: Methods.POST,
-      url: `${VANELLUS_BE}/comprobante/upload`,
+      url: `${VANELLUS_BE}/cloudinary/upload?event=${eventId}`,
       params: null,
       data: comprobante,
       headers: {

@@ -1,3 +1,4 @@
+// TicketMain.jsx
 import { useEffect, useState } from "react";
 import "./ticket.scss";
 import { GET_PRODUCER_DATA } from "../service/ticket.requests";
@@ -10,56 +11,60 @@ export default function TicketMain() {
 
   useEffect(() => {
     GET_PRODUCER_DATA()
-      .then((producerRes) => {
-        setProducerData(producerRes.data);
-        setIsLoading(false);
+      .then((res) => {
+        setProducerData(res.data);
       })
       .catch((error) => {
         console.error("Error loading data:", error);
-        setIsLoading(false);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const contactPhone = producerData?.users?.[0]?.phone;
-  const contactName = producerData?.users?.[0]?.fullName;
+  if (isLoading) return <Loader />;
+  if (!producerData) return <div>Error cargando datos del productor.</div>;
 
-  const activeEvent = producerData?.events?.[0];
+  // pick the first event and its first preventa
+  const activeEvent = producerData.events?.[0];
+  const prevent = activeEvent?.prevents?.[0];
 
-  const hasActiveEventWithPrevent = Boolean(activeEvent);
+  // pick your contact user (fallback to producer email)
+  const contactUser = producerData.users?.[0] || {};
+  const contactPhone = contactUser.phone;
+  const contactName = contactUser.fullName || producerData.contactEmail;
+  const contactHref = contactPhone
+    ? `https://wa.me/${contactPhone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`
+    : `mailto:${producerData.contactEmail}`;
 
   return (
     <div className="content-page">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="prevent-tickets">
-            {hasActiveEventWithPrevent ? (
-              <TicketTemplate
-                image={producerData.logo}
-                activeEvent={activeEvent}
-                prevent={activeEvent?.prevent?.[0]}
-              />
-            ) : (
-              <div className="create-event-label">
-                <p>
-                  No se encontró un evento activo o preventas. Por favor, crea un evento y asigna las preventas correspondientes.
-                </p>
-              </div>
-            )}
-            <h2 className="info-help">
-              Por cualquier problema comunicarse con{" "}
-              <a
-                href={`https://wa.me/${contactPhone}?text=Hola!%20Necesito%20entradas%20para%20la%20Envuelto`}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {contactName}
-              </a>
-            </h2>
+      <div className="prevent-tickets">
+        {activeEvent && prevent ? (
+          <TicketTemplate
+            image={producerData.logo}
+            activeEvent={activeEvent}
+            prevent={prevent}
+          />
+        ) : (
+          <div className="create-event-label">
+            <p>
+              No se encontró un evento activo o preventas. Por favor, crea un
+              evento y asigna las preventas correspondientes.
+            </p>
           </div>
-          <img src={producerData.logo} alt="img" className="flyer-img" />
-        </>
+        )}
+        <h2 className="info-help">
+          Por cualquier problema comunicarse con{" "}
+          <a href={contactHref} target="_blank" rel="noreferrer">
+            {contactName}
+          </a>
+        </h2>
+      </div>
+      {producerData.logo && (
+        <img
+          src={producerData.logo}
+          alt="Logo del productor"
+          className="flyer-img"
+        />
       )}
     </div>
   );
