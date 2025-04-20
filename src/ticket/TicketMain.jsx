@@ -38,7 +38,7 @@ export default function TicketMain() {
   return (
     <div className="content-page">
       <div className="prevent-tickets">
-        {activeEvent && prevent ? (
+        {activeEvent ? (
           <TicketTemplate
             image={producerData.logo}
             activeEvent={activeEvent}
