@@ -42,10 +42,10 @@ export default function ClientUpload({
   });
 
   const handleAddClient = (values, setFieldValue) => {
-    setClients((prevCli) => [...prevCli, { 
-      fullName: values.fullName, 
-      dni: values.dni, 
-      sexo: values.sexo, 
+    setClients((prevCli) => [...prevCli, {
+      fullName: values.fullName,
+      dni: values.dni,
+      sexo: values.sexo,
       phone: values.phone
     }])
     setFieldValue('fullName', '')
@@ -83,30 +83,30 @@ export default function ClientUpload({
       phone: client.phone,
       email: ticketData.email
     }));
-console.log(clientsData)
-    // await CREATE_CLIENT(clientsData, event.id, comprobanteFile).then((res) => {
-    //   setIsLoading(false);
-    //   setShowCreate(false);
-    //   setTotalClients(1);
-    //   setClients([]);
-    //   setFieldValue('comprobante', '');
-    //   setFieldValue('email', '');
-    //   setComprobanteFile(null);
 
-    //   if (res?.success) {
-    //     return Swal.fire({
-    //       title: 'Compra realizada con éxito',
-    //       icon: 'success',
-    //       text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
-    //     })
-    //   } else {
-    //     const message = res?.message && res?.message?.length > 0 ? res?.message : 'Ocurrió un error, intenta devuelta';
-    //     return Swal.fire({
-    //       title: message,
-    //       icon: 'error'
-    //     })
-    //   }
-    // })
+    await CREATE_CLIENT(clientsData, event.id, comprobanteFile).then((res) => {
+      setIsLoading(false);
+      setShowCreate(false);
+      setTotalClients(1);
+      setClients([]);
+      setFieldValue('comprobante', '');
+      setFieldValue('email', '');
+      setComprobanteFile(null);
+
+      if (res?.success) {
+        return Swal.fire({
+          title: 'Compra realizada con éxito',
+          icon: 'success',
+          text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
+        })
+      } else {
+        const message = res?.message && res?.message?.length > 0 ? res?.message : 'Ocurrió un error, intenta devuelta';
+        return Swal.fire({
+          title: message,
+          icon: 'error'
+        })
+      }
+    })
   }
 
   return (
