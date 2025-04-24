@@ -11,8 +11,7 @@ export const CREATE_CLIENT = async (clientData, eventId, comprobanteFile) => {
     formData.append('comprobante', comprobanteFile);
     formData.append('clients', JSON.stringify(clientData));
 
-    const res = await request(Methods.POST, `http://localhost:4000/api/client/create/${eventId}`, null, formData);
-    // const res = await request(Methods.POST, `${VANELLUS_BE}/client/create/${eventId}`, null, clientData)
+    const res = await request(Methods.POST, `${VANELLUS_BE}/client/create/${eventId}`, null, formData)
     return res.data
   } catch (error) {
     console.log(error)
