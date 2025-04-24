@@ -5,9 +5,14 @@ import axios from "axios"
 
 const VANELLUS_BE = process.env.REACT_APP_VANELLUS_BE
 
-export const CREATE_TICKET = async (clientData) => {
+export const CREATE_CLIENT = async (clientData, eventId, comprobanteFile) => {
   try {
-    const res = await request(Methods.POST, `${VANELLUS_BE}/ticket/create`, null, clientData)
+    const formData = new FormData();
+    formData.append('comprobante', comprobanteFile);
+    formData.append('clients', JSON.stringify(clientData));
+
+    const res = await request(Methods.POST, `http://localhost:4000/api/client/create/${eventId}`, null, formData);
+    // const res = await request(Methods.POST, `${VANELLUS_BE}/client/create/${eventId}`, null, clientData)
     return res.data
   } catch (error) {
     console.log(error)

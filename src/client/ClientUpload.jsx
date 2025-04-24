@@ -1,12 +1,13 @@
 import { Field, Formik } from "formik";
 import { useState } from "react";
-import { Button, Col, Form, ListGroup, Modal, Spinner } from "react-bootstrap";
+import { Button, Col, Form, ListGroup, Modal, Row, Spinner } from "react-bootstrap";
 import * as yup from 'yup';
 import './client.scss';
-import { CREATE_TICKET, UPLOAD_COMPROBANTE } from "../service/ticket.requests";
+import { CREATE_CLIENT } from "../service/ticket.requests";
 import { FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { useRef } from "react";
+import { formatPrice } from "../helpers/constants";
 
 export default function ClientUpload({
   showCreate,
@@ -20,15 +21,15 @@ export default function ClientUpload({
 }) {
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [clients, setClients] = useState([]);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [comprobanteFile, setComprobanteFile] = useState(null);
   const fileInputRef = useRef(null);
 
   const schema = yup.object().shape({
-    fullName: yup.string().required('Nombre necesario').min(8, 'Esta bien??'),
-    dni: yup.string().required('DNI necesario').min(8, 'Esta bien??'),
-    sexo: yup.string().required('Sexo es requerido').oneOf(['HOMBRE', 'MUJER'], 'Seleccione una opción válida'),
+    fullName: yup.string().required('Nombre necesario'),
+    dni: yup.string().required('DNI necesario'),
+    phone: yup.string().optional(),
+    sexo: yup.string().required('Sexo es requerido').oneOf(['HOMBRE', 'MUJER', 'OTRO'], 'Seleccione una opción válida'),
     comprobante: yup.mixed().required('Comprobante necesario').test(
       'is-file-type',
       'Solo se permiten archivos de imagen o PDF',
@@ -41,10 +42,16 @@ export default function ClientUpload({
   });
 
   const handleAddClient = (values, setFieldValue) => {
-    setClients((prevCli) => [...prevCli, { fullName: values.fullName, dni: values.dni, sexo: values.sexo }])
+    setClients((prevCli) => [...prevCli, { 
+      fullName: values.fullName, 
+      dni: values.dni, 
+      sexo: values.sexo, 
+      phone: values.phone
+    }])
     setFieldValue('fullName', '')
     setFieldValue('dni', '')
     setFieldValue('sexo', '')
+    setFieldValue('phone', '')
   }
 
   const handleDeleteClient = (indexDelete) => {
@@ -56,65 +63,51 @@ export default function ClientUpload({
     setClients([]);
     setTotalPrice(prevent.price);
     setTotalClients(1);
-    setFileUrl('');
+    setComprobanteFile(null);
   }
 
   const handleAddComprobante = (e, setFieldValue) => {
-    if (e.target.files) {
-      handleUploadComprobante(e.target.files[0], setFieldValue)
+    const file = e.target.files?.[0];
+    if (file) {
+      setComprobanteFile(file);
+      setFieldValue('comprobante', file);
     }
-  }
+  };
 
   const handleCreateTicket = async (ticketData, setFieldValue) => {
     setIsLoading(true);
-    const dataParsed = {
-      email: ticketData.email?.toLowerCase(),
-      clients: clients,
-      cloudinaryUrl: fileUrl,
-      prevent: prevent._id,
-      total: totalPrice
-    }
-    await CREATE_TICKET(dataParsed).then((res) => {
-      setIsLoading(false);
-      setShowCreate(false);
-      setTotalClients(1);
-      setClients([]);
+    const clientsData = clients.map(client => ({
+      fullName: client.fullName,
+      docNumber: client.dni,
+      gender: client.sexo,
+      phone: client.phone,
+      email: ticketData.email
+    }));
+console.log(clientsData)
+    // await CREATE_CLIENT(clientsData, event.id, comprobanteFile).then((res) => {
+    //   setIsLoading(false);
+    //   setShowCreate(false);
+    //   setTotalClients(1);
+    //   setClients([]);
+    //   setFieldValue('comprobante', '');
+    //   setFieldValue('email', '');
+    //   setComprobanteFile(null);
 
-      setFieldValue('comprobante', '');
-      setFieldValue('email', '');
-      setFileUrl('');
-      if (res?.success) {
-        return Swal.fire({
-          title: 'Compra realizada con éxito',
-          icon: 'success',
-          text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
-        })
-      } else {
-        const message = res?.message && res?.message?.length > 0 ? res?.message : 'Ocurrió un error, intenta devuelta';
-        return Swal.fire({
-          title: message,
-          icon: 'error'
-        })
-      }
-    })
+    //   if (res?.success) {
+    //     return Swal.fire({
+    //       title: 'Compra realizada con éxito',
+    //       icon: 'success',
+    //       text: 'Gracias por tu compra. Vamos a validar el pago y la entrada sera enviada a tu mail en los proximos dias. Corroborar en la carpeta SPAM'
+    //     })
+    //   } else {
+    //     const message = res?.message && res?.message?.length > 0 ? res?.message : 'Ocurrió un error, intenta devuelta';
+    //     return Swal.fire({
+    //       title: message,
+    //       icon: 'error'
+    //     })
+    //   }
+    // })
   }
-
-  const handleUploadComprobante = async (file, setFieldValue) => {
-    setIsUploading(true);
-
-    const formData = new FormData();
-    formData.append('comprobante', file);
-    // const fileEncoded = new URLSearchParams(formData).toString();
-
-    await UPLOAD_COMPROBANTE(formData, event.id).then((res) => {
-      if (res.success) {
-        setFileUrl(res.fileUrl);
-        setFieldValue('comprobante', file)
-        setIsUploading(false);
-      }
-    })
-
-  };
 
   return (
     <Modal
@@ -137,7 +130,8 @@ export default function ClientUpload({
             dni: '',
             comprobante: '',
             email: '',
-            sexo: ''
+            sexo: '',
+            phone: ''
           }}
           onSubmit={handleCreateTicket}
         >
@@ -168,57 +162,75 @@ export default function ClientUpload({
               {
                 clients.length !== totalClients && (
                   <>
-                    <Form.Group as={Col} controlId="validationFormikFullName">
-                      <Form.Label>Nombre completo</Form.Label>
-                      <Field
-                        type="text"
-                        name="fullName"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.fullName}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.fullName}
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <Row>
+                      <Form.Group as={Col} controlId="validationFormikFullName">
+                        <Form.Label>Nombre completo</Form.Label>
+                        <Field
+                          type="text"
+                          name="fullName"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.fullName}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.fullName}
+                        </Form.Control.Feedback>
+                      </Form.Group>
 
-                    <Form.Group as={Col} controlId="validationFormikDni">
-                      <Form.Label>DNI</Form.Label>
-                      <Field
-                        type="text"
-                        name="dni"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.dni}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.dni}
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                      <Form.Group as={Col} controlId="validationFormikDni">
+                        <Form.Label>DNI</Form.Label>
+                        <Field
+                          type="text"
+                          name="dni"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.dni}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.dni}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Row>
 
-                    <Form.Group as={Col} controlId="validationFormikSexo" className="mb-4">
-                      <Form.Label>Sexo</Form.Label>
-                      <Form.Control
-                        className="w-25"
-                        as="select"
-                        name="sexo"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.sexo}
-                        isInvalid={!!errors.sexo}
-                      >
-                        <option value="">Seleccione</option>
-                        <option value="HOMBRE">HOMBRE</option>
-                        <option value="MUJER">MUJER</option>
-                      </Form.Control>
-                      <Form.Control.Feedback type="invalid">
-                        {errors.sexo}
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <Row className="mb-4">
+                      <Form.Group as={Col} controlId="validationFormikPhone">
+                        <Form.Label>Telefono</Form.Label>
+                        <Field
+                          type="text"
+                          name="phone"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.phone}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.phone}
+                        </Form.Control.Feedback>
+                      </Form.Group>
 
-                    <Form.Group as={Col} controlId="validationFormikAddClient">
+                      <Form.Group as={Col} controlId="validationFormikSexo">
+                        <Form.Label>Sexo</Form.Label>
+                        <Form.Control
+                          as="select"
+                          name="sexo"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.sexo}
+                          isInvalid={!!errors.sexo}
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="HOMBRE">HOMBRE</option>
+                          <option value="MUJER">MUJER</option>
+                          <option value="OTRO">OTRO</option>
+                        </Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.sexo}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Row>
+
+                    <Form.Group as={Row} controlId="validationFormikAddClient" className="p-2">
                       <Button
-                        className="mt-0 mb-3"
+                        className="w-100"
                         disabled={!(values.fullName && values.dni && values.sexo) || !!errors.fullName || !!errors.dni || !!errors.sexo}
                         onClick={(e) => {
                           handleAddClient(values, setFieldValue)
@@ -233,45 +245,27 @@ export default function ClientUpload({
                 clients.length === totalClients && (
                   <>
                     <Form.Group as={Col} className="info-alias">
-                      <Form.Label className="fs-5">Transferir ${totalPrice.toFixed(2)}</Form.Label>
+                      <Form.Label className="fs-5">Transferir ${formatPrice(totalPrice)}</Form.Label>
                       <div className="alias">
-                        <Form.Label>Hombres: {event.aliasHom}</Form.Label>
-                        <Form.Label>Mujeres: {event.aliasMuj}</Form.Label>
+                        <Form.Label>Alias: {event.alias}</Form.Label>
                       </div>
                     </Form.Group>
                     <Form.Group as={Col} controlId="validationFormikComprobante">
                       <Form.Label>Comprobante</Form.Label>
-                      {
-                        isUploading ? (
-                          <Spinner as="span" animation="border" size='sm' role="status" aria-hidden="true" />
-                        ) : (
-                          <>
-                            {
-                              fileUrl ? (
-                                <a href={fileUrl} target="_blank" rel="noreferrer">Comprobante</a>
-                              ) : (
-                                <input
-                                  type="file"
-                                  name="comprobante"
-                                  accept=".jpg, .jpeg, .png, .pdf"
-                                  ref={fileInputRef}
-                                  onChange={(event) => {
-                                    handleAddComprobante(event, setFieldValue)
-                                    handleChange(event)
-                                  }}
-                                  onBlur={handleBlur}
-                                />
-                              )
-                            }
-                          </>
-                        )
-                      }
+                      <input
+                        type="file"
+                        name="comprobante"
+                        accept=".jpg, .jpeg, .png, .pdf"
+                        ref={fileInputRef}
+                        onChange={(event) => handleAddComprobante(event, setFieldValue)}
+                        onBlur={handleBlur}
+                      />
                       <Form.Control.Feedback type="invalid">
                         {errors.comprobante}
                       </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Form.Group as={Col} controlId="validationFormikEmail">
+                    <Form.Group as={Col} controlId="validationFormikEmail" className="mb-3">
                       <Form.Label>Email</Form.Label>
                       <Field
                         type="text"
@@ -279,6 +273,7 @@ export default function ClientUpload({
                         onChange={handleChange}
                         onBlur={handleBlur}
                         value={values.email}
+                        className='w-75'
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.email}
@@ -286,23 +281,21 @@ export default function ClientUpload({
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="validationFormikButton">
-                      {isLoading ? (
-                        <Button disabled>
+                      <Button
+                        className="w-100"
+                        onClick={() => handleCreateTicket(values, setFieldValue)}
+                        disabled={
+                          clients.length !== totalClients ||
+                          errors.email ||
+                          errors.comprobante
+                        }
+                      >
+                        {isLoading ? (
                           <Spinner as="span" animation="border" size='sm' role="status" aria-hidden="true" />
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={() => handleCreateTicket(values, setFieldValue)}
-                          disabled={
-                            clients.length !== totalClients ||
-                            errors.email ||
-                            errors.comprobante ||
-                            isUploading
-                          }
-                        >
-                          Enviar
-                        </Button>
-                      )}
+                        ) : (
+                          'Enviar'
+                        )}
+                      </Button>
                     </Form.Group>
                   </>
                 )
