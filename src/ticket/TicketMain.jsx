@@ -1,4 +1,3 @@
-// TicketMain.jsx
 import { useEffect, useState } from "react";
 import "./ticket.scss";
 import { GET_PRODUCER_DATA } from "../service/ticket.requests";
@@ -23,11 +22,9 @@ export default function TicketMain() {
   if (isLoading) return <Loader />;
   if (!producerData) return <div>Error cargando datos del productor.</div>;
 
-  // pick the first event and its first preventa
   const activeEvent = producerData.events?.[0];
   const prevent = activeEvent?.prevents?.[0];
 
-  // pick your contact user (fallback to producer email)
   const contactUser = producerData.users?.[0] || {};
   const contactPhone = contactUser.phone;
   const contactName = contactUser.fullName || producerData.contactEmail;
@@ -40,7 +37,6 @@ export default function TicketMain() {
       <div className="prevent-tickets">
         {activeEvent ? (
           <TicketTemplate
-            image={producerData.logo}
             activeEvent={activeEvent}
             prevent={prevent}
           />
@@ -59,13 +55,6 @@ export default function TicketMain() {
           </a>
         </h2>
       </div>
-      {producerData.logo && (
-        <img
-          src={producerData.logo}
-          alt="Logo del productor"
-          className="flyer-img"
-        />
-      )}
     </div>
   );
 }

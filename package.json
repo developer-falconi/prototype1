@@ -12,6 +12,7 @@
     "bootstrap": "^5.3.5",
     "firebase": "^11.6.0",
     "formik": "^2.4.6",
+    "lucide-react": "^0.503.0",
     "luxon": "^3.6.1",
     "npm-check-updates": "^17.1.16",
     "qr-scanner": "^1.4.2",

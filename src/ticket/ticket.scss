@@ -229,6 +229,9 @@ h1 {
 
 .info-help {
   font-size: 1rem;
+  background-color: #FAFAFA;
+  padding: 5px;
+  border-radius: 8px;
 }
 
 .ghost-img {
@@ -239,6 +242,57 @@ h1 {
 
 .non-active {
   background: linear-gradient(to bottom, #dc3545 0%, #3c0303 26%, #ecedef 26%, #ecedef 100%);
+}
+
+.carousel {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 75vh;
+  width: 30rem;
+  overflow: hidden;
+}
+
+.carousel-images {
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.prev-btn,
+.next-btn {
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  background-color: rgba(94, 94, 94, 0.7);
+}
+
+.logo-img-container {
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 520px) {
@@ -304,11 +358,5 @@ h1 {
 
   .client-form input {
     width: 95%;
-  }
-
-  .info-help {
-    background-color: #FAFAFA;
-    padding: 5px;
-    border-radius: 8px;
   }
 }
