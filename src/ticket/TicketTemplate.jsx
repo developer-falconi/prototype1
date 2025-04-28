@@ -68,20 +68,18 @@ export default function TicketTemplate({ prevent, activeEvent }) {
       <div className="ticket-card">
         <div className="ticket-header">
           <h2 className="location">{activeEvent?.name || "Evento sin nombre"}</h2>
-          <div className="logo-img-container">
-            {eventImages && eventImages.length > 0 ? (
-              eventImages.map((img, index) => (
+          {eventImages && eventImages.length > 0 && (
+            <div className="logo-img-container">
+              {eventImages.map((img, index) => (
                 <img
                   key={index}
                   src={img.url}
                   alt={img.name}
                   className="logo-img"
                 />
-              ))
-            ) : (
-              <p>No images available</p>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="ticket-details">
