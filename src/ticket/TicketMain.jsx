@@ -32,7 +32,7 @@ export default function TicketMain() {
     : `mailto:${producerData.email?.email}`;
 
   return (
-    <div className="content-page">
+    <div className="content-page d-flex flex-column">
       <div className="prevent-tickets">
         {activeEvent ? (
           <TicketTemplate
@@ -51,6 +51,11 @@ export default function TicketMain() {
           Por cualquier problema comunicarse con{" "}
           <a href={contactHref} target="_blank" rel="noreferrer">Organizador</a>
         </h2>
+      </div>
+      <div className="d-flex w-100 justify-content-center align-items-center text-light">
+        <p style={{ backgroundColor: '#2E2E2E', width: '25rem' }} className="p-2 rounded-3">
+          Este evento fue creado con <a href="https://ticketera-fe.vercel.app/">Ticketera</a>
+        </p>
       </div>
     </div>
   );
