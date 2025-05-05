@@ -3,6 +3,7 @@ import "./ticket.scss";
 import { GET_PRODUCER_DATA } from "../service/ticket.requests";
 import Loader from "../loader/Loader";
 import TicketTemplate from "./TicketTemplate";
+import EventsCanvas from "./EventsOffCanva";
 
 export default function TicketMain() {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +34,20 @@ export default function TicketMain() {
 
   return (
     <div className="content-page d-flex flex-column">
+      <header className="ticket-header w-100 d-flex justify-content-between align-items-center p-4 bg-gradient-primary shadow-sm">
+        <div className="producer-info d-flex align-items-center">
+          {producerData.logoUrl && (
+            <img
+              src={producerData.logoUrl}
+              alt={producerData.name}
+              className="producer-logo me-3"
+            />
+          )}
+          <h1 className="producer-name text-white mb-0">{producerData.name}</h1>
+        </div>
+        <EventsCanvas events={producerData.events} />
+      </header>
+
       <div className="prevent-tickets">
         {activeEvent ? (
           <TicketTemplate
@@ -53,7 +68,7 @@ export default function TicketMain() {
         </h2>
       </div>
       <div className="d-flex w-100 justify-content-center align-items-center text-light">
-        <p style={{ backgroundColor: '#2E2E2E', width: '25rem' }} className="p-2 rounded-3">
+        <p className="p-2 rounded-3 m-0">
           Este evento fue creado con <a href="https://ticketera-fe.vercel.app/">Ticketera</a>
         </p>
       </div>

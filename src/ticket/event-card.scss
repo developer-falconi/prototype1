@@ -1,0 +1,80 @@
+.event-card {
+  background: #979696;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    margin: 0;
+    color: #222222;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+
+    &--active {
+      background-color: #28a745;
+      color: #ffffff;
+    }
+
+    &--inactive {
+      background-color: #6c757d;
+      color: #ffffff;
+    }
+  }
+
+  &__description {
+    font-size: 1rem;
+    color: #555555;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  &__info {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      padding: 0.25rem 0;
+
+      strong {
+        color: #333333;
+        width: 6rem;
+      }
+
+      span {
+        color: #444444;
+      }
+    }
+  }
+
+  &__tickets {
+    margin-top: auto;
+  }
+
+  &__no-prevents {
+    text-align: center;
+    color: #000000;
+    font-style: italic;
+    padding: 1rem 0;
+  }
+}
